@@ -5,7 +5,7 @@ from typing import Tuple
 import datetime
 
 
-class MdocImage(BaseModel):
+class MdocImageEntry(BaseModel):
     z_value: int
     tilt_angle: float
     stage_position: Tuple[float, float]
