@@ -35,7 +35,7 @@ class MdocSectionData(BaseModel):
     camera_index: Optional[int]
     divided_by2: Optional[bool]
     low_dose_con_set: Optional[int]
-    min_max_mean: Optional[tuple[float, float, float]]
+    min_max_mean: Optional[Tuple[float, float, float]]
     prior_record_dose: Optional[float]
     x_edge_dxy: Optional[Tuple[float, float]]
     y_edge_dxy: Optional[Tuple[float, float]]
