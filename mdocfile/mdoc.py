@@ -22,9 +22,9 @@ class Mdoc(BaseModel):
         title_idxs = find_title_entries(header_lines)
 
         titles = [header_lines[idx] for idx in title_idxs]
-        global_data = MdocGlobalData.from_filepart(header_lines)
+        global_data = MdocGlobalData.from_lines(header_lines)
         section_data = [
-            MdocSectionData.from_filepart(lines[start_idx:end_idx])
+            MdocSectionData.from_lines(lines[start_idx:end_idx])
             for start_idx, end_idx
             in zip(split_idxs, split_idxs[1:])
             ]

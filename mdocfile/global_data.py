@@ -19,7 +19,7 @@ class MdocGlobalData(BaseModel):
         return tuple(value.split())
 
     @classmethod
-    def from_filepart(cls, lines: List[str]):
+    def from_lines(cls, lines: List[str]):
         lines = [
             line
             for line

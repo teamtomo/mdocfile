@@ -108,7 +108,7 @@ class MdocSectionData(BaseModel):
         return datetime.strptime(value, '%d-%b-%y  %H:%M:%S', )
 
     @classmethod
-    def from_filepart(cls, lines: List[str]):
+    def from_lines(cls, lines: List[str]):
         lines = [line.strip('[]')
                  for line
                  in lines

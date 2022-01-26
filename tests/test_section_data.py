@@ -27,8 +27,9 @@ DateTime = 30-Nov-15  15:21:38
 """
 
 
-def test_section_data_from_filepart():
-    data = MdocSectionData.from_filepart(SECTION_DATA_EXAMPLE)
+def test_section_data_from_lines():
+    lines = SECTION_DATA_EXAMPLE.split('\n')
+    data = MdocSectionData.from_lines(lines)
     assert isinstance(data, MdocSectionData)
     assert data.tilt_angle == 0.000999877
     assert data.stage_position == (20.7936, 155.287)
