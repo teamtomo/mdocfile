@@ -12,6 +12,6 @@ def test_global_data_from_lines():
     lines = GLOBAL_DATA_EXAMPLE.split('\n')
     data = MdocGlobalData.from_lines(lines)
     assert isinstance(data, MdocGlobalData)
-    assert data.pixel_spacing == 5.4
-    assert data.image_file == Path('TS_01.mrc')
-    assert data.data_mode == 1
+    assert data.PixelSpacing == 5.4
+    assert data.ImageFile == Path('TS_01.mrc')
+    assert data.DataMode == 1
