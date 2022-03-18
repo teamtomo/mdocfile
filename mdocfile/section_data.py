@@ -29,7 +29,7 @@ class MdocSectionData(BaseModel):
     ImageShift: Optional[Tuple[float, float]]
     RotationAngle: Optional[float]
     ExposureTime: Optional[float]
-    Binning: Optional[int]
+    Binning: Optional[float]
     UsingCDS: Optional[bool]
     CameraIndex: Optional[int]
     DividedBy2: Optional[bool]
