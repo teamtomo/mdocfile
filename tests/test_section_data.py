@@ -15,7 +15,7 @@ Defocus = 2.68083
 ImageShift = -0.0108126 -0.121079
 RotationAngle = 175.3
 ExposureTime = 0.8
-Binning = 4
+Binning = 0.5
 CameraIndex = 2
 DividedBy2 = 1
 MagIndex = 31
@@ -43,7 +43,7 @@ def test_section_data_from_lines():
     assert data.ImageShift == (-0.0108126, -0.121079)
     assert data.RotationAngle == 175.3
     assert data.ExposureTime == 0.8
-    assert data.Binning == 4
+    assert data.Binning == 0.5
     assert data.CameraIndex == 2
     assert data.DividedBy2 is True
     assert data.MagIndex == 31
