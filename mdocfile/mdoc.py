@@ -30,3 +30,12 @@ class Mdoc(BaseModel):
             ]
         return cls(titles=titles, global_data=global_data, section_data=section_data)
 
+    def to_string(self):
+        """
+        Generate the string representation of the Mdoc data
+        """
+        return '\n\n'.join([
+            self.global_data.to_string(),
+            '\n\n'.join(self.titles),
+            '\n\n'.join(section.to_string() for section in self.section_data),
+        ])

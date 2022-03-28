@@ -92,3 +92,17 @@ class MdocSectionData(BaseModel):
         ]
         lines = {k: v for k, v in key_value_pairs}
         return cls(**lines)
+
+    def to_string(self):
+        dct = self.dict()
+        zvalue = dct.pop('ZValue')
+        lines = [f'[ZValue = {zvalue}]']
+        for k, v in dct.items():
+            if v is None:
+                continue
+            if isinstance(v, tuple):
+                v = ' '.join(str(el) for el in v)
+            if v == 'nan':
+                v = 'NaN'
+            lines.append(f'{k} = {v}')
+        return '\n'.join(lines)

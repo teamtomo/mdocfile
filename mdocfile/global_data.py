@@ -36,3 +36,15 @@ class MdocGlobalData(BaseModel):
         ]
         data = {k: v for k, v in key_value_pairs}
         return cls(**data)
+
+    def to_string(self):
+        lines = []
+        for k, v in self.dict().items():
+            if v is None:
+                continue
+            if isinstance(v, tuple):
+                v = ' '.join(str(el) for el in v)
+            if v == 'nan':
+                v = 'NaN'
+            lines.append(f'{k} = {v}')
+        return '\n'.join(lines)

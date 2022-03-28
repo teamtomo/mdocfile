@@ -1,4 +1,5 @@
 from os import PathLike
+from pathlib import Path
 
 import pandas as pd
 
@@ -6,7 +7,7 @@ from .mdoc import Mdoc
 from .utils import camel_to_snake as _camel_to_snake
 
 
-def read(filename: PathLike, camel_to_snake: bool = True) -> pd.DataFrame:
+def read(filename: PathLike, camel_to_snake: bool = True, as_dataframe: bool = True) -> pd.DataFrame:
     """Read an mdoc file as a pandas dataframe.
 
     Parameters
@@ -21,6 +22,9 @@ def read(filename: PathLike, camel_to_snake: bool = True) -> pd.DataFrame:
         dataframe containing info from mdoc file
     """
     mdoc = Mdoc.from_file(filename)
+    if not as_dataframe:
+        return mdoc
+
     global_data = mdoc.global_data.dict()
     section_data = {
         k: [section.dict()[k] for section in mdoc.section_data]
@@ -39,3 +43,14 @@ def read(filename: PathLike, camel_to_snake: bool = True) -> pd.DataFrame:
     if camel_to_snake is True:
         df.columns = [_camel_to_snake(h) for h in df.columns]
     return df
+
+
+def write(mdoc: Mdoc, filename: PathLike, overwrite: bool = False) -> None:
+    """
+    Write an Mdoc file
+    """
+    path = Path(filename)
+    if path.exists() and not overwrite:
+        raise FileExistsError(f'{path} exists. Use overwrite=True to overwrite.')
+    with open(filename, 'w+') as f:
+        f.write(mdoc.to_string())
