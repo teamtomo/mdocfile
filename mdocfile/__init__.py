@@ -1,1 +1,1 @@
-from .functions import read, write
+from .functions import read
