@@ -104,5 +104,9 @@ class MdocSectionData(BaseModel):
                 v = ' '.join(str(el) for el in v)
             if v == 'nan':
                 v = 'NaN'
+            if isinstance(v, datetime):
+                v = v.strftime('%y-%b-%d  %H:%M:%S')
+            if isinstance(v, Path):
+                v = fr'X:\spoof\frames\{v.name}'
             lines.append(f'{k} = {v}')
         return '\n'.join(lines)
