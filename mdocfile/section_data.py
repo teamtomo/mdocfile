@@ -94,10 +94,10 @@ class MdocSectionData(BaseModel):
         return cls(**lines)
 
     def to_string(self):
-        dct = self.dict()
-        zvalue = dct.pop('ZValue')
-        lines = [f'[ZValue = {zvalue}]']
-        for k, v in dct.items():
+        data = self.dict()
+        z_value = data.pop('ZValue')
+        lines = [f'[ZValue = {z_value}]']
+        for k, v in data.items():
             if v is None:
                 continue
             if isinstance(v, tuple):
