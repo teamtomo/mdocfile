@@ -15,6 +15,7 @@ class MdocGlobalData(BaseModel):
     ImageSeries: Optional[int]
     ImageFile: Optional[Path]
     PixelSpacing: Optional[float]
+    Voltage: Optional[int]
 
     @validator('ImageSize', pre=True)
     def multi_number_string_to_tuple(cls, value: str):
