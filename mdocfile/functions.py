@@ -39,14 +39,3 @@ def read(filename: PathLike, camel_to_snake: bool = True) -> pd.DataFrame:
     if camel_to_snake is True:
         df.columns = [_camel_to_snake(h) for h in df.columns]
     return df
-
-
-def write(mdoc: Mdoc, filename: PathLike, overwrite: bool = False) -> None:
-    """
-    Write an Mdoc file
-    """
-    path = Path(filename)
-    if path.exists() and not overwrite:
-        raise FileExistsError(f'{path} exists. Use overwrite=True to overwrite.')
-    with open(filename, 'w+') as f:
-        f.write(mdoc.to_string())
