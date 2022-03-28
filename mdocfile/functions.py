@@ -21,9 +21,6 @@ def read(filename: PathLike, camel_to_snake: bool = True) -> pd.DataFrame:
         dataframe containing info from mdoc file
     """
     mdoc = Mdoc.from_file(filename)
-    if not as_dataframe:
-        return mdoc
-
     global_data = mdoc.global_data.dict()
     section_data = {
         k: [section.dict()[k] for section in mdoc.section_data]
