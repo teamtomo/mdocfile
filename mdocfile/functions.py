@@ -6,7 +6,7 @@ from .mdoc import Mdoc
 from .utils import camel_to_snake as _camel_to_snake
 
 
-def read(filename: PathLike, camel_to_snake: bool = True, as_dataframe: bool = True) -> pd.DataFrame:
+def read(filename: PathLike, camel_to_snake: bool = True) -> pd.DataFrame:
     """Read an mdoc file as a pandas dataframe.
 
     Parameters
