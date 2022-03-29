@@ -1,4 +1,3 @@
-from datetime import datetime
 from pathlib import Path
 from typing import Optional, Tuple, Union, Sequence, List
 
@@ -46,7 +45,7 @@ class MdocSectionData(BaseModel):
     SubFramePath: Optional[Path]
     NumSubFrames: Optional[int]
     FrameDosesAndNumbers: Optional[Sequence[Tuple[float, int]]]
-    DateTime: Optional[datetime]
+    DateTime: Optional[str]
     NavigatorLabel: Optional[str]
     FilterSlitAndLoss: Optional[Tuple[float, float]]
     ChannelName: Optional[str]
@@ -74,10 +73,6 @@ class MdocSectionData(BaseModel):
     def multi_number_string_to_tuple(cls, value: str):
         return tuple(value.split())
 
-    @validator('DateTime', pre=True)
-    def mdoc_datetime_to_datetime(cls, value: str):
-        return datetime.strptime(value, '%d-%b-%y  %H:%M:%S', )
-
     @classmethod
     def from_lines(cls, lines: List[str]):
         lines = [line.strip('[]')
@@ -100,11 +95,9 @@ class MdocSectionData(BaseModel):
         for k, v in data.items():
             if v is None:
                 continue
-            if isinstance(v, tuple):
+            elif isinstance(v, tuple):
                 v = ' '.join(str(el) for el in v)
-            if v == 'nan':
+            elif v == 'nan':
                 v = 'NaN'
-            if isinstance(v, datetime):
-                v = v.strftime('%y-%b-%d  %H:%M:%S')
             lines.append(f'{k} = {v}')
         return '\n'.join(lines)
