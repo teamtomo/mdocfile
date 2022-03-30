@@ -51,8 +51,4 @@ def test_section_data_from_lines():
     assert data.TargetDefocus == -4
     assert data.SubFramePath == Path(r'D:\DATA\Flo\HGK149_20151130\frames\TS_01_000_0.0.mrc')
     assert data.NumSubFrames == 8
-    assert data.DateTime == MdocSectionData.mdoc_datetime_to_datetime('30-Nov-15  15:21:38')
-
-
-
-
+    assert data.DateTime == '30-Nov-15  15:21:38'
