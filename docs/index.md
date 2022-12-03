@@ -1,4 +1,4 @@
-# mdocfile
+# Overview
 
 [![License](https://img.shields.io/pypi/l/mdocfile.svg?color=green)](https://github.com/alisterburt/mdocfile/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/mdocfile.svg?color=green)](https://pypi.org/project/mdocfile)
