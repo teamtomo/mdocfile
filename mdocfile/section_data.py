@@ -10,6 +10,7 @@ class MdocSectionData(BaseModel):
     https://bio3d.colorado.edu/SerialEM/hlp/html/about_formats.htm
     """
     ZValue: Optional[int]
+    MontSection: Optional[int]
     TiltAngle: Optional[float]
     PieceCoordinates: Optional[Tuple[float, float, int]]
     StagePosition: Tuple[float, float]
@@ -37,11 +38,11 @@ class MdocSectionData(BaseModel):
     PriorRecordDose: Optional[float]
     XedgeDxy: Optional[Tuple[float, float]]
     YedgeDxy: Optional[Tuple[float, float]]
-    XedgeDxyVS: Optional[Tuple[float, float]]
-    YedgeDxyVS: Optional[Tuple[float, float]]
+    XedgeDxyVS: Optional[Union[Tuple[float, float], Tuple[float, float, float]]]
+    YedgeDxyVS: Optional[Union[Tuple[float, float], Tuple[float, float, float]]]
     StageOffsets: Optional[Tuple[float, float]]
     AlignedPieceCoords: Optional[Tuple[float, float]]
-    AlignedPieceCoordsVS: Optional[Tuple[float, float]]
+    AlignedPieceCoordsVS: Optional[Union[Tuple[float, float], Tuple[float, float, float]]]
     SubFramePath: Optional[Path]
     NumSubFrames: Optional[int]
     FrameDosesAndNumbers: Optional[Sequence[Tuple[float, int]]]
@@ -62,7 +63,7 @@ class MdocSectionData(BaseModel):
         'XedgeDxy',
         'YedgeDxy',
         'XedgeDxyVS',
-        'XedgeDxyVS',
+        'YedgeDxyVS',
         'StageOffsets',
         'AlignedPieceCoords',
         'AlignedPieceCoordsVS',

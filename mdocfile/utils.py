@@ -8,14 +8,18 @@ def camel_to_snake(word: str) -> str:
     return camel_to_snake_regex.sub('_', word).lower()
 
 
-def find_z_value_entries(lines: List[str]) -> List[int]:
-    """Find the strings which contains a z-value entry.
-    """
-    z_value_idxs = []
-    for idx, line in enumerate(lines):
-        if line.startswith('[ZValue ='):
-            z_value_idxs.append(idx)
-    return z_value_idxs
+def find_section_entries(lines: List[str]) -> List[int]:
+    """Find the strings which contains a z-value or montage section entry."""
+    section_idx = [
+        idx
+        for idx, line
+        in enumerate(lines)
+        if line.startswith('[ZValue =') or line.startswith('[MontSection =')
+    ]
+    # for idx, line in enumerate(lines):
+    #     if line.startswith('[ZValue =') or line.startswith('[MontSection ='):
+    #         section_idx.append(idx)
+    return section_idx
 
 
 def find_title_entries(lines: List[str]) -> List[int]:
