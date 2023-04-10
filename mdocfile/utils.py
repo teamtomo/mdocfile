@@ -14,7 +14,7 @@ def find_section_entries(lines: List[str]) -> List[int]:
         idx
         for idx, line
         in enumerate(lines)
-        if line.startswith('[ZValue =') or line.startswith('[MontSection =')
+        if line.startswith('[ZValue =') or line.startswith('[MontSection =') or line.startswith('[FrameSet =')
     ]
     # for idx, line in enumerate(lines):
     #     if line.startswith('[ZValue =') or line.startswith('[MontSection ='):
