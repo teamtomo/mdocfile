@@ -13,7 +13,7 @@ class MdocSectionData(BaseModel):
     MontSection: Optional[int]
     TiltAngle: Optional[float]
     PieceCoordinates: Optional[Tuple[float, float, int]]
-    StagePosition: Tuple[float, float]
+    StagePosition: Optional[Tuple[float, float]]
     StageZ: Optional[float]
     Magnification: Optional[float]
     CameraLength: Optional[float]
