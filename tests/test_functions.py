@@ -14,3 +14,15 @@ def test_read_montage_section_mdoc(montage_section_mdoc_file):
     df = read(montage_section_mdoc_file)
     assert isinstance(df, pd.DataFrame)
     assert df.shape == (63, 37)
+
+
+def test_read_frame_set_single_mdoc(frame_set_single_mdoc_file):
+    df = read(frame_set_single_mdoc_file)
+    assert isinstance(df, pd.DataFrame)
+    assert df.shape == (1, 26)
+
+
+def test_read_frame_set_multiple_mdoc(frame_set_multiple_mdoc_file):
+    df = read(frame_set_multiple_mdoc_file)
+    assert isinstance(df, pd.DataFrame)
+    assert df.shape == (21, 28)
