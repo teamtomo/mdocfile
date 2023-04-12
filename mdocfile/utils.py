@@ -9,16 +9,18 @@ def camel_to_snake(word: str) -> str:
 
 
 def find_section_entries(lines: List[str]) -> List[int]:
-    """Find the strings which contains a z-value or montage section entry."""
+    """Find the strings which contains a section entry header."""
     section_idx = [
         idx
         for idx, line
         in enumerate(lines)
-        if line.startswith('[ZValue =') or line.startswith('[MontSection =') or line.startswith('[FrameSet =')
+        if (
+            line.startswith('[ZValue =')
+            or line.startswith('[MontSection =')
+            or line.startswith('[FrameSet =')
+        )
     ]
-    # for idx, line in enumerate(lines):
-    #     if line.startswith('[ZValue =') or line.startswith('[MontSection ='):
-    #         section_idx.append(idx)
+
     return section_idx
 
 

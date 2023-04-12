@@ -9,8 +9,12 @@ class MdocSectionData(BaseModel):
 
     https://bio3d.colorado.edu/SerialEM/hlp/html/about_formats.htm
     """
+    # headers
     ZValue: Optional[int]
     MontSection: Optional[int]
+    FrameSet: Optional[int]
+
+    # section data
     TiltAngle: Optional[float]
     PieceCoordinates: Optional[Tuple[float, float, int]]
     StagePosition: Optional[Tuple[float, float]]
