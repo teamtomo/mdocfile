@@ -45,7 +45,7 @@ class MdocSectionData(BaseModel):
     XedgeDxyVS: Optional[Union[Tuple[float, float], Tuple[float, float, float]]]
     YedgeDxyVS: Optional[Union[Tuple[float, float], Tuple[float, float, float]]]
     StageOffsets: Optional[Tuple[float, float]]
-    AlignedPieceCoords: Optional[Tuple[float, float]]
+    AlignedPieceCoords: Optional[Union[Tuple[float, float], Tuple[float, float, float]]]
     AlignedPieceCoordsVS: Optional[Union[Tuple[float, float], Tuple[float, float, float]]]
     SubFramePath: Optional[Path]
     NumSubFrames: Optional[int]
