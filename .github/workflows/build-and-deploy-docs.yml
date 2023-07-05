@@ -21,7 +21,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # pip install -e .
           pip install mkdocs mkdocs-material mkdocstrings[python]
       # Build the book
       - name: Build the book

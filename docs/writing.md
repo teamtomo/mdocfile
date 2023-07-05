@@ -38,7 +38,7 @@ from mdocfile.data_models import Mdoc, MdocGlobalData, MdocSectionData
 
 # construct global data model
 global_data = MdocGlobalData(
-    DataMode=1, 
+    DataMode=1,
     ImageSize=(3838, 3710),
     PixelSpacing=1.35,
     Voltage=300
