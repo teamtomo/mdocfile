@@ -1,0 +1,530 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for mdocfile: SerialEM mdoc file IO in Python.">
+      
+      
+        <meta name="author" content="teamtomo">
+      
+      
+        <link rel="canonical" href="https://teamtomo.org/mdocfile/writing/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+    
+    
+      
+        <title>Writing mdoc files - mdocfile</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.26e3688c.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ecc896b0.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#writing-mdoc-files" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="mdocfile" class="md-header__button md-logo" aria-label="mdocfile" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9M12 4.15 6.04 7.5 12 10.85l5.96-3.35L12 4.15M5 15.91l6 3.38v-6.71L5 9.21v6.7m14 0v-6.7l-6 3.37v6.71l6-3.38Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            mdocfile
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Writing mdoc files
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/teamtomo/mdocfile" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    teamtomo/mdocfile
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="mdocfile" class="md-nav__button md-logo" aria-label="mdocfile" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9M12 4.15 6.04 7.5 12 10.85l5.96-3.35L12 4.15M5 15.91l6 3.38v-6.71L5 9.21v6.7m14 0v-6.7l-6 3.37v6.71l6-3.38Z"/></svg>
+
+    </a>
+    mdocfile
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/teamtomo/mdocfile" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    teamtomo/mdocfile
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Writing mdoc files
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Writing mdoc files
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-with-dataframes" class="md-nav__link">
+    The problem with dataframes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction-to-data-models" class="md-nav__link">
+    Introduction to data models
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#writing-an-mdoc-file" class="md-nav__link">
+    Writing an mdoc file
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-with-dataframes" class="md-nav__link">
+    The problem with dataframes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction-to-data-models" class="md-nav__link">
+    Introduction to data models
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#writing-an-mdoc-file" class="md-nav__link">
+    Writing an mdoc file
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="writing-mdoc-files">Writing mdoc files</h1>
+<p>This page will explain how to write valid SerialEM mdoc files in Python 
+using <em>mdocfile</em>.</p>
+<h2 id="the-problem-with-dataframes">The problem with dataframes</h2>
+<p><em>mdocfile</em> returns a single pandas dataframe when reading files. This tabular representation 
+is convenient for data exploration and analysis. Some global data is replicated across 
+all sections to enable returning this simple dataframe but this makes the dataframe a bad 
+model for the contents of a file.</p>
+<h2 id="introduction-to-data-models">Introduction to data models</h2>
+<p>The contents of a file are represented as a small set of 
+<a href="https://docs.pydantic.dev/latest/">pydantic models</a> internally. 
+These are simple classes containing data that provide guarantees about the types of those 
+data based on type hints.</p>
+<ul>
+<li><a href="https://github.com/teamtomo/mdocfile/blob/a7015de82fb511f4a76be6326b2b15c0ab27245c/mdocfile/data_models.py#L161-L164">Mdoc</a> - the whole file</li>
+<li><a href="https://github.com/teamtomo/mdocfile/blob/a7015de82fb511f4a76be6326b2b15c0ab27245c/mdocfile/data_models.py#L8-L19">MdocGlobalData</a> - global data applying to all sections</li>
+<li><a href="https://github.com/teamtomo/mdocfile/blob/a7015de82fb511f4a76be6326b2b15c0ab27245c/mdocfile/data_models.py#L55-L108">MdocSectionData</a> - data pertaining to each section</li>
+</ul>
+<p>These models can be explicitly constructed and used to write an mdoc file.</p>
+<h2 id="writing-an-mdoc-file">Writing an mdoc file</h2>
+<p>In this section, we will write a simple mdoc file with data for two sections.</p>
+<p>The attribute names for each model reflect those found in the 
+<a href="https://bio3d.colorado.edu/SerialEM/hlp/html/about_formats.htm">SerialEM documentation</a>.
+The expected types can be seen by inspecting the model definitions in 
+<a href="https://github.com/teamtomo/mdocfile/blob/main/mdocfile/data_models.py">data_models.py</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">mdocfile.data_models</span> <span class="kn">import</span> <span class="n">Mdoc</span><span class="p">,</span> <span class="n">MdocGlobalData</span><span class="p">,</span> <span class="n">MdocSectionData</span>
+
+<span class="c1"># construct global data model</span>
+<span class="n">global_data</span> <span class="o">=</span> <span class="n">MdocGlobalData</span><span class="p">(</span>
+    <span class="n">DataMode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+    <span class="n">ImageSize</span><span class="o">=</span><span class="p">(</span><span class="mi">3838</span><span class="p">,</span> <span class="mi">3710</span><span class="p">),</span>
+    <span class="n">PixelSpacing</span><span class="o">=</span><span class="mf">1.35</span><span class="p">,</span>
+    <span class="n">Voltage</span><span class="o">=</span><span class="mi">300</span>
+<span class="p">)</span>
+
+<span class="c1"># construct section data models</span>
+<span class="n">first_section</span> <span class="o">=</span> <span class="n">MdocSectionData</span><span class="p">(</span>
+    <span class="n">ZValue</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">TiltAngle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">StagePosition</span><span class="o">=</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">),</span>
+    <span class="n">PriorRecordDose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">ExposureDose</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">SubFramePath</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/images/first_image.tif&#39;</span><span class="p">),</span>
+    <span class="n">DateTime</span><span class="o">=</span><span class="s1">&#39;05-Nov-15  15:21:38&#39;</span><span class="p">,</span>
+    <span class="n">NumSubFrames</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">second_section</span> <span class="o">=</span> <span class="n">MdocSectionData</span><span class="p">(</span>
+    <span class="n">ZValue</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">TiltAngle</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">StagePosition</span><span class="o">=</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">),</span>
+    <span class="n">PriorRecordDose</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">ExposureDose</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="n">SubFramePath</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/images/second_image.tif&#39;</span><span class="p">),</span>
+    <span class="n">DateTime</span><span class="o">=</span><span class="s1">&#39;05-Nov-15  15:22:38&#39;</span><span class="p">,</span>
+    <span class="n">NumSubFrames</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># construct mdoc model</span>
+<span class="n">mdoc</span> <span class="o">=</span> <span class="n">Mdoc</span><span class="p">(</span>
+    <span class="n">titles</span><span class="o">=</span><span class="p">[</span>
+        <span class="s1">&#39;[T = SerialEM: Digitized on EMBL Krios                       30-Nov-15  15:14:20    ]&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;[T =     Tilt axis angle = 85.3, binning = 4  spot = 8  camera = 2]&#39;</span>
+    <span class="p">],</span>
+    <span class="n">global_data</span><span class="o">=</span><span class="n">global_data</span><span class="p">,</span>
+    <span class="n">section_data</span><span class="o">=</span><span class="p">[</span><span class="n">first_section</span><span class="p">,</span> <span class="n">second_section</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># write out the file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;my_new_mdoc.mdoc&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">mdoc</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</code></pre></div>
+<p>The code above produces the following file:</p>
+<div class="highlight"><pre><span></span><code>DataMode = 1
+ImageSize = 3838 3710
+PixelSpacing = 1.35
+Voltage = 300.0
+
+[T = SerialEM: Digitized on EMBL Krios                       30-Nov-15  15:14:20    ]
+
+[T =     Tilt axis angle = 85.3, binning = 4  spot = 8  camera = 2]
+
+[ZValue = 0]
+TiltAngle = 0.0
+StagePosition = 0.25 -0.25
+ExposureDose = 0.3
+PriorRecordDose = 0.0
+SubFramePath = /images/first_image.tif
+NumSubFrames = 8
+DateTime = 05-Nov-15  15:21:38
+
+[ZValue = 1]
+TiltAngle = 3.0
+StagePosition = 0.25 -0.25
+ExposureDose = 0.3
+PriorRecordDose = 0.3
+SubFramePath = /images/second_image.tif
+NumSubFrames = 8
+DateTime = 05-Nov-15  15:22:38
+</code></pre></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022 - 2022 teamtomo
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.expand", "search.highlight", "search.suggest", "content.tabs.link"], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
+      
+    
+  </body>
+</html>
