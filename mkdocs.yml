@@ -12,6 +12,7 @@ copyright: Copyright &copy; 2022 - 2022 teamtomo
 
 nav:
   - index.md
+  - writing.md
 
 theme:
   icon:

@@ -11,8 +11,9 @@
 com/7307488/205445941-8db4ad0e-648a-446e-812d-bd1b81ec19b8.png"> 
 </p>
 
-*mdocfile* is Python package for working with [SerialEM](https://bio3d.colorado.
-edu/SerialEM/) mdoc files.
+*mdocfile* is Python package for working with 
+[SerialEM](https://bio3d.colorado.edu/SerialEM/) 
+mdoc files.
 
 ---
 
@@ -26,6 +27,10 @@ import mdocfile
 
 df = mdocfile.read('my_mdoc_file.mdoc')
 ```
+
+---
+
+For writing valid mdoc files, please see [writing mdoc files](./writing.md).
 
 # Installation
 
