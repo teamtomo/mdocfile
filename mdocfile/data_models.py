@@ -21,7 +21,9 @@ class MdocGlobalData(BaseModel):
     @field_validator('ImageSize', mode="before")
     @classmethod
     def multi_number_string_to_tuple(cls, value: str):
-        return tuple(value.split())
+        if isinstance(value, str):
+            value = tuple(value.split())
+        return value
 
     @classmethod
     def from_lines(cls, lines: List[str]):
@@ -126,7 +128,9 @@ class MdocSectionData(BaseModel):
         mode="before")
     @classmethod
     def multi_number_string_to_tuple(cls, value: str):
-        return tuple(value.split())
+        if isinstance(value, str):
+            value = tuple(value.split())
+        return value
 
     @classmethod
     def from_lines(cls, lines: List[str]):
