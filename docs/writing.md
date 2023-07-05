@@ -34,7 +34,7 @@ The expected types can be seen by inspecting the model definitions in
 
 ```python
 from pathlib import Path
-from src.mdocfile.data_models import Mdoc, MdocGlobalData, MdocSectionData
+from mdocfile.data_models import Mdoc, MdocGlobalData, MdocSectionData
 
 # construct global data model
 global_data = MdocGlobalData(
