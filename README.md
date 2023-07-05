@@ -29,7 +29,7 @@ df = mdocfile.read('my_mdoc_file.mdoc')
 ```
 
 For writing valid mdoc files, please see 
-[writing mdoc files](https://www.teamtomo.org/mdocfile/writing).
+[writing mdoc files](https://teamtomo.org/mdocfile/writing/).
 
 
 # Installation
