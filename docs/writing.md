@@ -34,11 +34,11 @@ The expected types can be seen by inspecting the model definitions in
 
 ```python
 from pathlib import Path
-from mdocfile.data_models import Mdoc, MdocGlobalData, MdocSectionData
+from src.mdocfile.data_models import Mdoc, MdocGlobalData, MdocSectionData
 
 # construct global data model
 global_data = MdocGlobalData(
-    DataMode=1, 
+    DataMode=1,
     ImageSize=(3838, 3710),
     PixelSpacing=1.35,
     Voltage=300
