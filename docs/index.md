@@ -23,7 +23,8 @@ mdoc files.
 dataframe.
 
 ```python
-import mdocfile
+
+from src import mdocfile
 
 df = mdocfile.read('my_mdoc_file.mdoc')
 ```
