@@ -1,6 +1,23 @@
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 
-from mdocfile.section_data import MdocSectionData
+from mdocfile.data_models import MdocGlobalData, MdocSectionData, Mdoc
+
+GLOBAL_DATA_EXAMPLE = r"""PixelSpacing = 5.4
+ImageFile = TS_01.mrc
+ImageSize = 924 958
+DataMode = 1
+"""
+
+
+def test_global_data_from_lines():
+    lines = GLOBAL_DATA_EXAMPLE.split('\n')
+    data = MdocGlobalData.from_lines(lines)
+    assert isinstance(data, MdocGlobalData)
+    assert data.PixelSpacing == 5.4
+    assert data.ImageFile == Path('TS_01.mrc')
+    assert data.DataMode == 1
+
 
 SECTION_DATA_EXAMPLE = r"""[ZValue = 0]
 TiltAngle = 0.000999877
@@ -52,3 +69,23 @@ def test_section_data_from_lines():
     assert data.SubFramePath == Path(r'D:\DATA\Flo\HGK149_20151130\frames\TS_01_000_0.0.mrc')
     assert data.NumSubFrames == 8
     assert data.DateTime == '30-Nov-15  15:21:38'
+
+
+def test_mdoc_from_tilt_series_mdoc_file(tilt_series_mdoc_file):
+    mdoc = Mdoc.from_file(tilt_series_mdoc_file)
+    assert isinstance(mdoc, Mdoc)
+    assert len(mdoc.titles) == 2
+    assert mdoc.global_data.PixelSpacing == 5.4
+    assert len(mdoc.section_data) == 41
+
+
+def test_to_string_is_valid_mdoc(tilt_series_mdoc_file):
+    mdoc = Mdoc.from_file(tilt_series_mdoc_file)
+    with NamedTemporaryFile() as tmp:
+        tmp.write(mdoc.to_string().encode())
+        mdoc2 = Mdoc.from_file(tmp.name)
+    mdoc_dict = mdoc.section_data[0].model_dump()
+    mdoc2_dict = mdoc2.section_data[0].model_dump()
+    for (k1, v1), (k2, v2) in zip(mdoc_dict.items(), mdoc2_dict.items()):
+        assert v1 == v2
+        assert k1 == k2
