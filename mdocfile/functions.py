@@ -2,7 +2,7 @@ from os import PathLike
 
 import pandas as pd
 
-from .mdoc import Mdoc
+from .data_models import Mdoc
 
 
 def read(filename: PathLike) -> pd.DataFrame:
@@ -19,11 +19,11 @@ def read(filename: PathLike) -> pd.DataFrame:
         dataframe containing info from mdoc file
     """
     mdoc = Mdoc.from_file(filename)
-    global_data = mdoc.global_data.dict()
+    global_data = mdoc.global_data.model_dump()
     section_data = {
-        k: [section.dict()[k] for section in mdoc.section_data]
+        k: [section.model_dump()[k] for section in mdoc.section_data]
         for k
-        in mdoc.section_data[0].dict().keys()
+        in mdoc.section_data[0].model_dump().keys()
     }
     df = pd.DataFrame(data=section_data)
 
