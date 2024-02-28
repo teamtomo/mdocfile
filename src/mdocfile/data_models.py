@@ -1,5 +1,5 @@
 from pydantic import field_validator, BaseModel
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import List, Optional, Tuple, Union, Sequence
 
 from mdocfile.utils import find_section_entries, find_title_entries
@@ -98,7 +98,7 @@ class MdocSectionData(BaseModel):
     AlignedPieceCoords: Optional[Union[Tuple[float, float], Tuple[float, float, float]]] = None
     AlignedPieceCoordsVS: Optional[
         Union[Tuple[float, float], Tuple[float, float, float]]] = None
-    SubFramePath: Optional[Path] = None
+    SubFramePath: Optional[PureWindowsPath] = None
     NumSubFrames: Optional[int] = None
     FrameDosesAndNumbers: Optional[Sequence[Tuple[float, int]]] = None
     DateTime: Optional[str] = None
