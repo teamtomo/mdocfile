@@ -1,4 +1,4 @@
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from tempfile import NamedTemporaryFile
 
 from mdocfile.data_models import MdocGlobalData, MdocSectionData, Mdoc
@@ -66,7 +66,7 @@ def test_section_data_from_lines():
     assert data.MagIndex == 31
     assert data.MinMaxMean == (5, 1403, 623.699)
     assert data.TargetDefocus == -4
-    assert data.SubFramePath == Path(r'D:\DATA\Flo\HGK149_20151130\frames\TS_01_000_0.0.mrc')
+    assert data.SubFramePath == PureWindowsPath(r'D:\DATA\Flo\HGK149_20151130\frames\TS_01_000_0.0.mrc')
     assert data.NumSubFrames == 8
     assert data.DateTime == '30-Nov-15  15:21:38'
 
