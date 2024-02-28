@@ -1,4 +1,4 @@
-from pathlib import PureWindowsPath
+from pathlib import Path, PureWindowsPath
 from tempfile import NamedTemporaryFile
 
 from mdocfile.data_models import MdocGlobalData, MdocSectionData, Mdoc
