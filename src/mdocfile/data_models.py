@@ -98,7 +98,7 @@ class MdocSectionData(BaseModel):
     AlignedPieceCoords: Optional[Union[Tuple[float, float], Tuple[float, float, float]]] = None
     AlignedPieceCoordsVS: Optional[
         Union[Tuple[float, float], Tuple[float, float, float]]] = None
-    SubFramePath: Optional[PureWindowsPath] = None
+    SubFramePath: Optional[Union[PureWindowsPath, Path]] = None
     NumSubFrames: Optional[int] = None
     FrameDosesAndNumbers: Optional[Sequence[Tuple[float, int]]] = None
     DateTime: Optional[str] = None

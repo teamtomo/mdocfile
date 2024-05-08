@@ -89,3 +89,6 @@ def test_to_string_is_valid_mdoc(tilt_series_mdoc_file):
     for (k1, v1), (k2, v2) in zip(mdoc_dict.items(), mdoc2_dict.items()):
         assert v1 == v2
         assert k1 == k2
+
+def test_section_data_from_path():
+    section = MdocSectionData(SubFramePath=Path('bla.tif'))
