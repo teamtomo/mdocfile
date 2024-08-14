@@ -29,13 +29,6 @@ import mdocfile
 df = mdocfile.read('my_mdoc_file.mdoc')
 ```
 
-`mdocfile.read_string()` will read mdoc file data stored in a string.
-
-```python
-
-df = mdocfile.read_string('...mdoc string data...')
-```
-
 ---
 
 For writing valid mdoc files, please see [writing mdoc files](./writing.md).
