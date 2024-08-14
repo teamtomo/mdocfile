@@ -28,6 +28,17 @@ import mdocfile
 df = mdocfile.read('my_mdoc_file.mdoc')
 ```
 
+`Mdoc.from_string().as_dataframe()` will return the contents of string mdoc data as a pandas dataframe. 
+This is useful for mdoc data that is not stored in a file (e.g. from a database or a web request). 
+
+```python
+from mdocfile.data_models import Mdoc
+
+mdoc_data = ...
+
+mdoc = Mdoc.from_string(mdoc_data).as_dataframe()
+```
+
 For writing valid mdoc files, please see 
 [writing mdoc files](https://teamtomo.org/mdocfile/writing/).
 
