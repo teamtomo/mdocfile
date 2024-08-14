@@ -170,7 +170,17 @@ class Mdoc(BaseModel):
     @classmethod
     def from_file(cls, filename: str):
         with open(filename) as file:
-            lines = [line.strip() for line in file.readlines()]
+            return cls.from_lines(file.readlines())
+    
+    @classmethod
+    def from_string(cls, string: str):
+        lines = string.split('\n')
+
+        return cls.from_lines(lines)
+    
+    @classmethod
+    def from_lines(cls, file_lines: List[str]):
+        lines = [line.strip() for line in file_lines]
         split_idxs = find_section_entries(lines)
         split_idxs.append(len(lines))
 
