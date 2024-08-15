@@ -1,11 +1,16 @@
-import pytest
 from pathlib import Path
+
+import pytest
 
 
 @pytest.fixture
 def tilt_series_mdoc_file():
     return Path(__file__).parent / 'test_data' / 'tilt_series.mdoc'
 
+@pytest.fixture
+def tilt_series_mdoc_string():
+    with open(Path(__file__).parent / 'test_data' / 'tilt_series.mdoc') as f:
+        return f.read()
 
 @pytest.fixture
 def montage_section_mdoc_file():

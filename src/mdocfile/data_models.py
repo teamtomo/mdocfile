@@ -1,3 +1,4 @@
+import pandas as pd
 from pydantic import field_validator, BaseModel
 from pathlib import Path, PureWindowsPath
 from typing import List, Optional, Tuple, Union, Sequence
@@ -170,7 +171,17 @@ class Mdoc(BaseModel):
     @classmethod
     def from_file(cls, filename: str):
         with open(filename) as file:
-            lines = [line.strip() for line in file.readlines()]
+            return cls.from_lines(file.readlines())
+    
+    @classmethod
+    def from_string(cls, string: str):
+        lines = string.split('\n')
+
+        return cls.from_lines(lines)
+    
+    @classmethod
+    def from_lines(cls, file_lines: List[str]) -> 'Mdoc':
+        lines = [line.strip() for line in file_lines]
         split_idxs = find_section_entries(lines)
         split_idxs.append(len(lines))
 
@@ -185,6 +196,26 @@ class Mdoc(BaseModel):
             in zip(split_idxs, split_idxs[1:])
         ]
         return cls(titles=titles, global_data=global_data, section_data=section_data)
+    
+    def as_dataframe(self) -> pd.DataFrame:
+        """
+        Convert an Mdoc object to a pandas DataFrame
+        """
+        global_data = self.global_data.model_dump()
+        section_data = {
+            k: [section.model_dump()[k] for section in self.section_data]
+            for k
+            in self.section_data[0].model_dump().keys()
+        }
+        df = pd.DataFrame(data=section_data)
+
+        # add duplicate copies of global data and mdoc file titles to each row of
+        # the dataframe - tidy data is easier to analyse
+        for k, v in global_data.items():
+            df[k] = [v] * len(df)
+        df['titles'] = [self.titles] * len(df)
+        df = df.dropna(axis='columns', how='all')
+        return df
 
     def to_string(self):
         """
