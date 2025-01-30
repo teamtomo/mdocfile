@@ -48,7 +48,6 @@ class MdocGlobalData(BaseModel):
         for k in cls.model_fields.keys():
             if k in df.columns:
                 data[k] = df[k].iloc[0]
-
         return cls(**data)
 
     def to_string(self):
