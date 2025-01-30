@@ -21,14 +21,15 @@ def read(filename: PathLike) -> pd.DataFrame:
     return Mdoc.from_file(filename).to_dataframe()
 
 def write(df: pd.DataFrame, filename: PathLike):
-    """Write a pandas dataframe to an mdoc file.
+    """Write a pandas dataframe to an mdoc file. 
+    Note this only works for tilt series mdoc files, not montages or frame sets.
 
     Parameters
     ----------
     df : pd.DataFrame
-        dataframe to write to mdoc file
+        dataframe containing info from mdoc file
     filename : PathLike
-        filename to write to
+        path of file to be written
     """
     mdoc = Mdoc.from_dataframe(df)
     with open(filename, 'w') as file:
