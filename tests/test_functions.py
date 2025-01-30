@@ -52,7 +52,6 @@ def test_write_tilt_series_mdoc(tilt_series_mdoc_file):
     df2 = read(f"{tmp_path}/test.mdoc")
     
     shutil.rmtree(tmp_path)
-
     assert df.equals(df2)
 
 
