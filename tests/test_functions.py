@@ -1,3 +1,6 @@
+import shutil
+import os
+
 import pandas as pd
 
 from mdocfile import read, write
@@ -39,40 +42,79 @@ def test_read_frame_set_multiple_mdoc(frame_set_multiple_mdoc_file):
     assert isinstance(df, pd.DataFrame)
     assert df.shape == (21, 28)
 
-def test_write_tilt_series_mdoc(tilt_series_mdoc_file, tmp_path):
+
+def test_write_tilt_series_mdoc(tilt_series_mdoc_file):
+    tmp_path = "tests/test_data/tmpdir/"
+    os.makedirs(tmp_path, exist_ok=True)
+
     df = read(tilt_series_mdoc_file)
     write(df, f"{tmp_path}/test.mdoc")
     df2 = read(f"{tmp_path}/test.mdoc")
+    
+    shutil.rmtree(tmp_path)
+
+    assert df.equals(df2)
+
+
+def test_write_tilt_series_mdoc_string(tilt_series_mdoc_string):
+    tmp_path = "tests/test_data/tmpdir/"
+    os.makedirs(tmp_path, exist_ok=True)
+
+    df = Mdoc.from_string(tilt_series_mdoc_string).to_dataframe()
+    write(df, f"{tmp_path}/test.mdoc")
+    df2 = read(f"{tmp_path}/test.mdoc")
+
+    shutil.rmtree(tmp_path)
+
     assert df.equals(df2)
 
 """
-def test_write_tilt_series_mdoc_string(tilt_series_mdoc_string, tmp_path):
-    df = Mdoc.from_string(tilt_series_mdoc_string).as_dataframe()
-    write(df, f"{tmp_path}/test.mdoc")
-    df2 = read(f"{tmp_path}/test.mdoc")
-    assert df.equals(df2)
+def test_write_montage_section_mdoc(montage_section_mdoc_file):
+    tmp_path = "tests/test_data/tmpdir/"
+    os.makedirs(tmp_path, exist_ok=True)
 
-def test_write_montage_section_mdoc(montage_section_mdoc_file, tmp_path):
     df = read(montage_section_mdoc_file)
     write(df, f"{tmp_path}/test.mdoc")
     df2 = read(f"{tmp_path}/test.mdoc")
+
+    shutil.rmtree(tmp_path)
+
     assert df.equals(df2)
 
-def test_write_montage_section_multiple_mdoc(montage_section_multiple_mdoc_file, tmp_path):
+def test_write_montage_section_multiple_mdoc(montage_section_multiple_mdoc_file):
+    tmp_path = "tests/test_data/tmpdir/"
+    os.makedirs(tmp_path, exist_ok=True)
+
+
     df = read(montage_section_multiple_mdoc_file)
     write(df, f"{tmp_path}/test.mdoc")
     df2 = read(f"{tmp_path}/test.mdoc")
+
+    shutil.rmtree(tmp_path)
+
     assert df.equals(df2)
 
-def test_write_frame_set_single_mdoc(frame_set_single_mdoc_file, tmp_path):
+def test_write_frame_set_single_mdoc(frame_set_single_mdoc_file):
+    tmp_path = "tests/test_data/tmpdir/"
+    os.makedirs(tmp_path, exist_ok=True)
+
     df = read(frame_set_single_mdoc_file)
     write(df, f"{tmp_path}/test.mdoc")
     df2 = read(f"{tmp_path}/test.mdoc")
+
+    shutil.rmtree(tmp_path)
+
     assert df.equals(df2)
 
-def test_write_frame_set_multiple_mdoc(frame_set_multiple_mdoc_file, tmp_path):
+def test_write_frame_set_multiple_mdoc(frame_set_multiple_mdoc_file):
+    tmp_path = "tests/test_data/tmpdir/"
+    os.makedirs(tmp_path, exist_ok=True)
+
     df = read(frame_set_multiple_mdoc_file)
     write(df, f"{tmp_path}/test.mdoc")
     df2 = read(f"{tmp_path}/test.mdoc")
+
+    shutil.rmtree(tmp_path)
+
     assert df.equals(df2)
 """
