@@ -14,7 +14,7 @@ def test_read_tilt_series_mdoc(tilt_series_mdoc_file):
     assert 'TiltAngle' in df.columns
 
 def test_read_tilt_series_mdoc_string(tilt_series_mdoc_string):
-    df = Mdoc.from_string(tilt_series_mdoc_string).as_dataframe()
+    df = Mdoc.from_string(tilt_series_mdoc_string).to_dataframe()
     assert isinstance(df, pd.DataFrame)
     assert df.shape == (41, 26)
     assert 'TiltAngle' in df.columns
@@ -67,54 +67,3 @@ def test_write_tilt_series_mdoc_string(tilt_series_mdoc_string):
     shutil.rmtree(tmp_path)
 
     assert df.equals(df2)
-
-"""
-def test_write_montage_section_mdoc(montage_section_mdoc_file):
-    tmp_path = "tests/test_data/tmpdir/"
-    os.makedirs(tmp_path, exist_ok=True)
-
-    df = read(montage_section_mdoc_file)
-    write(df, f"{tmp_path}/test.mdoc")
-    df2 = read(f"{tmp_path}/test.mdoc")
-
-    shutil.rmtree(tmp_path)
-
-    assert df.equals(df2)
-
-def test_write_montage_section_multiple_mdoc(montage_section_multiple_mdoc_file):
-    tmp_path = "tests/test_data/tmpdir/"
-    os.makedirs(tmp_path, exist_ok=True)
-
-
-    df = read(montage_section_multiple_mdoc_file)
-    write(df, f"{tmp_path}/test.mdoc")
-    df2 = read(f"{tmp_path}/test.mdoc")
-
-    shutil.rmtree(tmp_path)
-
-    assert df.equals(df2)
-
-def test_write_frame_set_single_mdoc(frame_set_single_mdoc_file):
-    tmp_path = "tests/test_data/tmpdir/"
-    os.makedirs(tmp_path, exist_ok=True)
-
-    df = read(frame_set_single_mdoc_file)
-    write(df, f"{tmp_path}/test.mdoc")
-    df2 = read(f"{tmp_path}/test.mdoc")
-
-    shutil.rmtree(tmp_path)
-
-    assert df.equals(df2)
-
-def test_write_frame_set_multiple_mdoc(frame_set_multiple_mdoc_file):
-    tmp_path = "tests/test_data/tmpdir/"
-    os.makedirs(tmp_path, exist_ok=True)
-
-    df = read(frame_set_multiple_mdoc_file)
-    write(df, f"{tmp_path}/test.mdoc")
-    df2 = read(f"{tmp_path}/test.mdoc")
-
-    shutil.rmtree(tmp_path)
-
-    assert df.equals(df2)
-"""
