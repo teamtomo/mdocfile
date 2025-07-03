@@ -18,6 +18,7 @@ class MdocGlobalData(BaseModel):
     ImageFile: Optional[Path] = None
     PixelSpacing: Optional[float] = None
     Voltage: Optional[float] = None
+    Version: Optional[str] = None
 
     @field_validator('ImageSize', mode="before")
     @classmethod
@@ -96,6 +97,7 @@ class MdocSectionData(BaseModel):
     UsingCDS: Optional[bool] = None
     CameraIndex: Optional[int] = None
     DividedBy2: Optional[bool] = None
+    RotationAndFlip: Optional[int] = None
     LowDoseConSet: Optional[int] = None
     MinMaxMean: Optional[Tuple[float, float, float]] = None
     PriorRecordDose: Optional[float] = None
