@@ -101,8 +101,8 @@ class MdocSectionData(BaseModel):
     LowDoseConSet: Optional[int] = None
     MinMaxMean: Optional[Tuple[float, float, float]] = None
     PriorRecordDose: Optional[float] = None
-    XedgeDxy: Optional[Tuple[float, float]] = None
-    YedgeDxy: Optional[Tuple[float, float]] = None
+    XedgeDxy: Optional[Union[Tuple[float, float], Tuple[float, float, float]]] = None
+    YedgeDxy: Optional[Union[Tuple[float, float], Tuple[float, float, float]]] = None
     XedgeDxyVS: Optional[Union[Tuple[float, float], Tuple[float, float, float]]] = None
     YedgeDxyVS: Optional[Union[Tuple[float, float], Tuple[float, float, float]]] = None
     StageOffsets: Optional[Tuple[float, float]] = None
