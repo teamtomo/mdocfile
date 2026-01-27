@@ -83,6 +83,7 @@ def test_to_string_is_valid_mdoc(tilt_series_mdoc_file):
     mdoc = Mdoc.from_file(tilt_series_mdoc_file)
     with NamedTemporaryFile() as tmp:
         tmp.write(mdoc.to_string().encode())
+        tmp.flush()
         mdoc2 = Mdoc.from_file(tmp.name)
     mdoc_dict = mdoc.section_data[0].model_dump()
     mdoc2_dict = mdoc2.section_data[0].model_dump()
@@ -91,4 +92,96 @@ def test_to_string_is_valid_mdoc(tilt_series_mdoc_file):
         assert k1 == k2
 
 def test_section_data_from_path():
-    section = MdocSectionData(SubFramePath=Path('bla.tif'))
+    some_path = Path('bla.tif')
+    section = MdocSectionData(SubFramePath=some_path)
+    assert section.SubFramePath == some_path
+    assert f'SubFramePath = {some_path}' in section.to_string()
+
+def test_fieldname_alias_mapping():
+    """Test that aliased field names are mapped to canonical names."""
+    lines = """[ZValue = 0]
+TiltAngle = 5.0
+FrameDosesAndNumber = 2.5 10 3.0 20
+""".split('\n')
+
+    section = MdocSectionData.from_lines(lines)
+
+    # Should be accessible via canonical name
+    assert section.FrameDosesAndNumbers is not None
+    assert section.FrameDosesAndNumbers == [(2.5, 10), (3.0, 20)]
+
+    # to_string should output the canonical name (FrameDosesAndNumbers)
+    output = section.to_string()
+    assert 'FrameDosesAndNumbers = 2.5 10 3.0 20' in output
+    # Original aliased name should not appear
+    assert 'FrameDosesAndNumber =' not in output
+
+
+def test_extra_fields_round_trip():
+    """Test that unknown fields are preserved through full Mdoc round-trip."""
+    mdoc_str = """DataMode = 1
+ImageFile = test.mrc
+
+[ZValue = 0]
+TiltAngle = 5.0
+CountsPerElectron = 42.0
+UnknownCustomField = some_value
+"""
+
+    mdoc = Mdoc.from_string(mdoc_str)
+
+    # Extra fields stored in model_extra
+    assert mdoc.section_data[0].model_extra['CountsPerElectron'] == '42.0'
+    assert mdoc.section_data[0].model_extra['UnknownCustomField'] == 'some_value'
+
+    # Round-trip preserves extra fields
+    mdoc2 = Mdoc.from_string(mdoc.to_string())
+    assert mdoc2.section_data[0].model_extra['CountsPerElectron'] == '42.0'
+    assert mdoc2.section_data[0].model_extra['UnknownCustomField'] == 'some_value'
+
+
+def test_dataframe_alias_mapping():
+    """Test that aliased field names work through dataframe round-trip."""
+    mdoc_str = """DataMode = 1
+ImageFile = test.mrc
+
+[ZValue = 0]
+TiltAngle = 5.0
+FrameDosesAndNumber = 2.5 10 3.0 20
+"""
+
+    mdoc = Mdoc.from_string(mdoc_str)
+    df = mdoc.to_dataframe()
+
+    # Dataframe should have canonical name
+    assert 'FrameDosesAndNumbers' in df.columns
+
+    # Round-trip through dataframe
+    mdoc2 = Mdoc.from_dataframe(df)
+    assert mdoc2.section_data[0].FrameDosesAndNumbers == [(2.5, 10), (3.0, 20)]
+
+
+def test_dataframe_extra_fields_round_trip():
+    """Test that extra fields survive dataframe round-trip."""
+    mdoc_str = """DataMode = 1
+ImageFile = test.mrc
+
+[ZValue = 0]
+TiltAngle = 5.0
+CountsPerElectron = 42.0
+UnknownCustomField = some_value
+"""
+
+    mdoc = Mdoc.from_string(mdoc_str)
+    df = mdoc.to_dataframe()
+
+    # Extra fields should be columns in dataframe
+    assert 'CountsPerElectron' in df.columns
+    assert 'UnknownCustomField' in df.columns
+    assert df['CountsPerElectron'].iloc[0] == '42.0'
+    assert df['UnknownCustomField'].iloc[0] == 'some_value'
+
+    # Round-trip through dataframe preserves extra fields
+    mdoc2 = Mdoc.from_dataframe(df)
+    assert mdoc2.section_data[0].model_extra['CountsPerElectron'] == '42.0'
+    assert mdoc2.section_data[0].model_extra['UnknownCustomField'] == 'some_value'

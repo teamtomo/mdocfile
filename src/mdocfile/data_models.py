@@ -1,9 +1,12 @@
+import logging
 import pandas as pd
-from pydantic import field_validator, BaseModel
+from pydantic import field_validator, model_validator, BaseModel, ConfigDict, Field
 from pathlib import Path, PureWindowsPath
 from typing import List, Optional, Tuple, Union, Sequence
 
 from mdocfile.utils import find_section_entries, find_title_entries
+
+log = logging.getLogger('mdocfile')
 
 
 class MdocGlobalData(BaseModel):
@@ -11,6 +14,8 @@ class MdocGlobalData(BaseModel):
 
     https://bio3d.colorado.edu/SerialEM/hlp/html/about_formats.htm
     """
+    model_config = ConfigDict(extra='allow')
+
     DataMode: Optional[int] = None
     ImageSize: Optional[Tuple[int, int]] = None
     Montage: Optional[bool] = None
@@ -69,6 +74,10 @@ class MdocSectionData(BaseModel):
 
     https://bio3d.colorado.edu/SerialEM/hlp/html/about_formats.htm
     """
+    model_config = ConfigDict(extra='allow', # keep extra field data
+                              validate_by_name=True) # use our validations for aliased fields
+                              # serialize_by_alias=True) # use the version of the fieldname the file arrived as
+
     # headers
     ZValue: Optional[int] = None
     MontSection: Optional[int] = None
@@ -111,7 +120,9 @@ class MdocSectionData(BaseModel):
         Union[Tuple[float, float], Tuple[float, float, float]]] = None
     SubFramePath: Optional[Union[PureWindowsPath, Path]] = None
     NumSubFrames: Optional[int] = None
-    FrameDosesAndNumbers: Optional[Sequence[Tuple[float, int]]] = None
+    FrameDosesAndNumbers: Optional[Sequence[Tuple[float, int]]] = Field(
+        default=None, validation_alias='FrameDosesAndNumber'
+    )
     DateTime: Optional[str] = None
     NavigatorLabel: Optional[str] = None
     FilterSlitAndLoss: Optional[Tuple[float, float]] = None
@@ -119,6 +130,16 @@ class MdocSectionData(BaseModel):
     MultiShotHoleAndPosition: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None
     CameraPixelSize: Optional[float] = None
     Voltage: Optional[float] = None
+
+    @model_validator(mode='before')
+    @classmethod
+    def warn_on_aliases(cls, data):
+        if isinstance(data, dict):
+            for field_name, field_info in cls.model_fields.items():
+                alias = field_info.validation_alias
+                if alias and alias in data:
+                    log.warning(f"'{alias}' mapped to '{field_name}'")
+        return data
 
     @field_validator(
         'PieceCoordinates',
@@ -133,7 +154,6 @@ class MdocSectionData(BaseModel):
         'StageOffsets',
         'AlignedPieceCoords',
         'AlignedPieceCoordsVS',
-        'FrameDosesAndNumbers',
         'FilterSlitAndLoss',
         'MultiShotHoleAndPosition',
         mode="before")
@@ -143,28 +163,31 @@ class MdocSectionData(BaseModel):
             value = tuple(value.split())
         return value
 
+    @field_validator('FrameDosesAndNumbers', mode="before")
+    @classmethod
+    def parse_frame_doses_and_numbers(cls, value: str):
+        """Parse 'dose1 num1 dose2 num2 ...' into [(dose1, num1), ...]"""
+        if isinstance(value, str):
+            parts = value.split()
+            return [(float(parts[i]), int(parts[i+1])) for i in range(0, len(parts)-1, 2)]
+        return value
+
     @classmethod
     def from_lines(cls, lines: List[str]):
-        lines = [line.strip('[]')
-                 for line
-                 in lines
-                 if len(line) > 0]
-        key_value_pairs = [line.split('=') for line in lines]
-        key_value_pairs = [
-            (k.strip(), v.strip())
-            for k, v
-            in key_value_pairs
-        ]
-        lines = {k: v for k, v in key_value_pairs}
-        return cls(**lines)
+        data = {}
+        for line in lines:
+            line = line.strip().strip('[]')
+            if not line or '=' not in line:
+                continue
+            k, v = line.split('=', 1)
+            data[k.strip()] = v.strip()
+        return cls(**data)
     
     @classmethod
     def from_dataframe(cls, series: pd.Series):
-        section = {}
-        for k in cls.model_fields.keys():
-            if k in series.index.tolist():
-                section[k] = series[k]
-        return cls(**section)
+        skip = set(MdocGlobalData.model_fields.keys()) | {'titles'}
+        data = {k: series[k] for k in series.index if k not in skip}
+        return cls(**data)
 
     def to_string(self):
         data = self.model_dump()
@@ -173,6 +196,8 @@ class MdocSectionData(BaseModel):
         for k, v in data.items():
             if v is None:
                 continue
+            elif k == 'FrameDosesAndNumbers' and isinstance(v, list):
+                v = ' '.join(f'{d} {n}' for d, n in v)
             elif isinstance(v, tuple):
                 v = ' '.join(str(el) for el in v)
             elif v == 'nan':
@@ -213,6 +238,14 @@ class Mdoc(BaseModel):
             for start_idx, end_idx
             in zip(split_idxs, split_idxs[1:])
         ]
+
+        # Warn about extra fields
+        extra_fields = set(global_data.model_extra.keys())
+        for s in section_data:
+            extra_fields.update(s.model_extra.keys())
+        if extra_fields:
+            log.warning(f"Unknown fields will be preserved: {extra_fields}")
+
         return cls(titles=titles, global_data=global_data, section_data=section_data)
     
     def to_dataframe(self) -> pd.DataFrame:
@@ -220,12 +253,20 @@ class Mdoc(BaseModel):
         Convert an Mdoc object to a pandas DataFrame
         """
         global_data = self.global_data.model_dump()
-        section_data = {
-            k: [section.model_dump()[k] for section in self.section_data]
-            for k
-            in self.section_data[0].model_dump().keys()
-        }
-        df = pd.DataFrame(data=section_data)
+        # Include extra fields from global_data
+        global_data.update(self.global_data.model_extra)
+
+        # Collect all keys from all sections (including extras)
+        all_keys = set()
+        section_dicts = []
+        for section in self.section_data:
+            d = section.model_dump()
+            d.update(section.model_extra)
+            section_dicts.append(d)
+            all_keys.update(d.keys())
+
+        # Build section_data dict with None for missing keys
+        df = pd.DataFrame(data=dict((k, [d.get(k) for d in section_dicts]) for k in all_keys))
 
         # add duplicate copies of global data and mdoc file titles to each row of
         # the dataframe - tidy data is easier to analyse
