@@ -44,8 +44,9 @@ def test_read_frame_set_single_mdoc(frame_set_single_mdoc_file):
 def test_read_frame_set_multiple_mdoc(frame_set_multiple_mdoc_file):
     df = read(frame_set_multiple_mdoc_file)
     assert isinstance(df, pd.DataFrame)
-    assert df.shape[0] == 21  # row count
-    assert df.shape[1] >= 28  # at least this many columns (extra fields preserved)
+    num_rows, num_cols = df.shape
+    assert num_row == 21
+    assert num_cols >= 28  # (extra fields preserved)
 
 
 def test_write_tilt_series_mdoc(tilt_series_mdoc_file):
