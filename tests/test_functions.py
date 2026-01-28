@@ -37,8 +37,9 @@ def test_read_montage_section_multiple_mdoc(montage_section_multiple_mdoc_file):
 def test_read_frame_set_single_mdoc(frame_set_single_mdoc_file):
     df = read(frame_set_single_mdoc_file)
     assert isinstance(df, pd.DataFrame)
-    assert df.shape[0] == 1  # row count
-    assert df.shape[1] >= 26  # at least this many columns (extra fields preserved)
+    num_rows, num_cols = df.shape
+    assert num_rows == 1
+    assert num_cols >= 26  # extra fields preserved
 
 
 def test_read_frame_set_multiple_mdoc(frame_set_multiple_mdoc_file):
