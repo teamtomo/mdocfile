@@ -48,7 +48,7 @@ def test_read_frame_set_multiple_mdoc(frame_set_multiple_mdoc_file):
     df = read(frame_set_multiple_mdoc_file)
     assert isinstance(df, pd.DataFrame)
     num_rows, num_cols = df.shape
-    assert num_row == 21
+    assert num_rows == 21
     assert num_cols >= 28  # (extra fields preserved)
 
 
