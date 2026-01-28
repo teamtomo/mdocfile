@@ -22,8 +22,9 @@ def test_read_tilt_series_mdoc_string(tilt_series_mdoc_string):
 def test_read_montage_section_mdoc(montage_section_mdoc_file):
     df = read(montage_section_mdoc_file)
     assert isinstance(df, pd.DataFrame)
-    assert df.shape[0] == 63  # row count
-    assert df.shape[1] >= 37  # at least this many columns (extra fields preserved)
+    num_rows, num_cols = df.shape
+    assert num_rows == 63
+    assert num_cols >= 37  # extra fields preserved
     assert 'TiltAngle' in df.columns
 
 
