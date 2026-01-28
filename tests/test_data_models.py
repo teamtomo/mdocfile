@@ -110,11 +110,16 @@ FrameDosesAndNumber = 2.5 10 3.0 20
     assert section.FrameDosesAndNumbers is not None
     assert section.FrameDosesAndNumbers == [(2.5, 10), (3.0, 20)]
 
-    # to_string should output the canonical name (FrameDosesAndNumbers)
-    output = section.to_string()
-    assert 'FrameDosesAndNumbers = 2.5 10 3.0 20' in output
-    # Original aliased name should not appear
-    assert 'FrameDosesAndNumber =' not in output
+    # to_string should output the alias FrameDosesAndNumber due to serialize_by_alias
+    assert 'FrameDosesAndNumber = 2.5 10 3.0 20' in section.to_string()
+
+    # Keeps orig
+    section = MdocSectionData.from_lines("""[ZValue = 0]
+TiltAngle = 5.0
+FrameDosesAndNumbers = 2.5 10 3.0 20
+""".split('\n'))
+    # to_string should output the alias FrameDosesAndNumber due to serialize_by_alias
+    assert 'FrameDosesAndNumbers = 2.5 10 3.0 20' in section.to_string()
 
 
 def test_extra_fields_round_trip():
@@ -153,12 +158,11 @@ FrameDosesAndNumber = 2.5 10 3.0 20
     mdoc = Mdoc.from_string(mdoc_str)
     df = mdoc.to_dataframe()
 
-    # Dataframe should have canonical name
-    assert 'FrameDosesAndNumbers' in df.columns
+    # Dataframe should have the alias it came as
+    assert 'FrameDosesAndNumber' in df.columns
 
     # Round-trip through dataframe
-    mdoc2 = Mdoc.from_dataframe(df)
-    assert mdoc2.section_data[0].FrameDosesAndNumbers == [(2.5, 10), (3.0, 20)]
+    assert Mdoc.from_dataframe(df).section_data[0].FrameDosesAndNumbers == [(2.5, 10), (3.0, 20)]
 
 
 def test_dataframe_extra_fields_round_trip():

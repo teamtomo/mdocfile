@@ -1,8 +1,8 @@
 import logging
 import pandas as pd
-from pydantic import field_validator, model_validator, BaseModel, ConfigDict, Field
+from pydantic import field_validator, BaseModel, ConfigDict, Field, PrivateAttr
 from pathlib import Path, PureWindowsPath
-from typing import List, Optional, Tuple, Union, Sequence
+from typing import List, Optional, Set, Tuple, Union, Sequence
 
 from mdocfile.utils import find_section_entries, find_title_entries
 
@@ -74,9 +74,8 @@ class MdocSectionData(BaseModel):
 
     https://bio3d.colorado.edu/SerialEM/hlp/html/about_formats.htm
     """
-    model_config = ConfigDict(extra='allow', # keep extra field data
-                              validate_by_name=True) # use our validations for aliased fields
-                              # serialize_by_alias=True) # use the version of the fieldname the file arrived as
+    model_config = ConfigDict(extra='allow', validate_by_name=True)
+    _used_aliases: dict = PrivateAttr(default_factory=dict)  # field_name -> alias
 
     # headers
     ZValue: Optional[int] = None
@@ -131,16 +130,6 @@ class MdocSectionData(BaseModel):
     CameraPixelSize: Optional[float] = None
     Voltage: Optional[float] = None
 
-    @model_validator(mode='before')
-    @classmethod
-    def warn_on_aliases(cls, data):
-        if isinstance(data, dict):
-            for field_name, field_info in cls.model_fields.items():
-                alias = field_info.validation_alias
-                if alias and alias in data:
-                    log.warning(f"'{alias}' mapped to '{field_name}'")
-        return data
-
     @field_validator(
         'PieceCoordinates',
         'SuperMontCoords',
@@ -181,7 +170,19 @@ class MdocSectionData(BaseModel):
                 continue
             k, v = line.split('=', 1)
             data[k.strip()] = v.strip()
-        return cls(**data)
+
+        # Rename aliased fields and track which were used
+        used_aliases = {}
+        for field_name, field_info in cls.model_fields.items():
+            alias = field_info.validation_alias
+            if alias and alias in data:
+                data[field_name] = data.pop(alias)
+                used_aliases[field_name] = alias
+                log.warning(f"'{alias}' mapped to '{field_name}'")
+
+        inst = cls(**data)
+        inst._used_aliases = used_aliases
+        return inst
     
     @classmethod
     def from_dataframe(cls, series: pd.Series):
@@ -196,13 +197,17 @@ class MdocSectionData(BaseModel):
         for k, v in data.items():
             if v is None:
                 continue
-            elif k == 'FrameDosesAndNumbers' and isinstance(v, list):
+
+            # Use original fieldname if something was aliased
+            output_key = self._used_aliases.get(k, k)
+
+            if k == 'FrameDosesAndNumbers' and isinstance(v, list):
                 v = ' '.join(f'{d} {n}' for d, n in v)
             elif isinstance(v, tuple):
                 v = ' '.join(str(el) for el in v)
             elif v == 'nan':
                 v = 'NaN'
-            lines.append(f'{k} = {v}')
+            lines.append(f'{output_key} = {v}')
         return '\n'.join(lines)
 
 
@@ -252,25 +257,19 @@ class Mdoc(BaseModel):
         """
         Convert an Mdoc object to a pandas DataFrame
         """
-        global_data = self.global_data.model_dump()
-        # Include extra fields from global_data
-        global_data.update(self.global_data.model_extra)
-
-        # Collect all keys from all sections (including extras)
-        all_keys = set()
-        section_dicts = []
+        # Collect used aliases across all sections
+        used_aliases = {}
         for section in self.section_data:
-            d = section.model_dump()
-            d.update(section.model_extra)
-            section_dicts.append(d)
-            all_keys.update(d.keys())
+            used_aliases.update(section._used_aliases)
 
-        # Build section_data dict with None for missing keys
-        df = pd.DataFrame(data=dict((k, [d.get(k) for d in section_dicts]) for k in all_keys))
+        df = pd.DataFrame([
+            {used_aliases.get(k, k): v for k, v in section.model_dump().items()}
+            for section in self.section_data
+        ])
 
         # add duplicate copies of global data and mdoc file titles to each row of
         # the dataframe - tidy data is easier to analyse
-        for k, v in global_data.items():
+        for k, v in self.global_data.model_dump().items():
             df[k] = [v] * len(df)
         df['titles'] = [self.titles] * len(df)
         df = df.dropna(axis='columns', how='all')
