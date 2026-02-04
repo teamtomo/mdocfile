@@ -373,13 +373,13 @@ dataframe.</p>
 </code></pre></div>
 <hr />
 <h1 id="parsing-from-text">Parsing from text</h1>
-<p><code>Mdoc.from_string().as_dataframe()</code> will return the contents of string mdoc data as a pandas dataframe. 
+<p><code>Mdoc.from_string().to_dataframe()</code> will return the contents of string mdoc data as a pandas dataframe. 
 This is useful for mdoc data that is not stored in a file (e.g. from a database or a web request). </p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">mdocfile.data_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mdoc</span>
 
 <span class="n">mdoc_data</span> <span class="o">=</span> <span class="o">...</span>
 
-<span class="n">mdoc</span> <span class="o">=</span> <span class="n">Mdoc</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">mdoc_data</span><span class="p">)</span><span class="o">.</span><span class="n">as_dataframe</span><span class="p">()</span>
+<span class="n">mdoc</span> <span class="o">=</span> <span class="n">Mdoc</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">mdoc_data</span><span class="p">)</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
 </code></pre></div>
 
 
