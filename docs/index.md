@@ -45,7 +45,7 @@ pip install mdocfile
 
 # Parsing from text
 
-`Mdoc.from_string().as_dataframe()` will return the contents of string mdoc data as a pandas dataframe. 
+`Mdoc.from_string().to_dataframe()` will return the contents of string mdoc data as a pandas dataframe. 
 This is useful for mdoc data that is not stored in a file (e.g. from a database or a web request). 
 
 ```python
@@ -53,5 +53,5 @@ from mdocfile.data_models import Mdoc
 
 mdoc_data = ...
 
-mdoc = Mdoc.from_string(mdoc_data).as_dataframe()
+mdoc = Mdoc.from_string(mdoc_data).to_dataframe()
 ```
