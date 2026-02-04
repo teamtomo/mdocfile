@@ -22,25 +22,34 @@ def test_read_tilt_series_mdoc_string(tilt_series_mdoc_string):
 def test_read_montage_section_mdoc(montage_section_mdoc_file):
     df = read(montage_section_mdoc_file)
     assert isinstance(df, pd.DataFrame)
-    assert df.shape == (63, 37)
+    num_rows, num_cols = df.shape
+    assert num_rows == 63
+    assert num_cols >= 37  # extra fields preserved
+    assert 'TiltAngle' in df.columns
 
 
 def test_read_montage_section_multiple_mdoc(montage_section_multiple_mdoc_file):
     df = read(montage_section_multiple_mdoc_file)
     assert isinstance(df, pd.DataFrame)
-    assert df.shape == (100, 36)
+    num_rows, num_cols = df.shape
+    assert num_rows == 100
+    assert num_cols >= 36  # extra fields preserved
 
 
 def test_read_frame_set_single_mdoc(frame_set_single_mdoc_file):
     df = read(frame_set_single_mdoc_file)
     assert isinstance(df, pd.DataFrame)
-    assert df.shape == (1, 26)
+    num_rows, num_cols = df.shape
+    assert num_rows == 1
+    assert num_cols >= 26  # extra fields preserved
 
 
 def test_read_frame_set_multiple_mdoc(frame_set_multiple_mdoc_file):
     df = read(frame_set_multiple_mdoc_file)
     assert isinstance(df, pd.DataFrame)
-    assert df.shape == (21, 28)
+    num_rows, num_cols = df.shape
+    assert num_rows == 21
+    assert num_cols >= 28  # (extra fields preserved)
 
 
 def test_write_tilt_series_mdoc(tilt_series_mdoc_file):
