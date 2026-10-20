@@ -192,8 +192,15 @@ class MdocSectionData(BaseModel):
 
     def to_string(self):
         data = self.model_dump()
-        z_value = data.pop('ZValue')
-        lines = [f'[ZValue = {z_value}]']
+        # A section is headed by whichever of ZValue, MontSection or FrameSet
+        # it was read with, e.g. [MontSection = 0] or [FrameSet = 0].
+        header_key = 'ZValue'
+        for key in ('ZValue', 'MontSection', 'FrameSet'):
+            if data[key] is not None:
+                header_key = key
+                break
+        header_value = data.pop(header_key)
+        lines = [f'[{header_key} = {header_value}]']
         for k, v in data.items():
             if v is None:
                 continue
