@@ -189,3 +189,14 @@ UnknownCustomField = some_value
     mdoc2 = Mdoc.from_dataframe(df)
     assert mdoc2.section_data[0].model_extra['CountsPerElectron'] == '42.0'
     assert mdoc2.section_data[0].model_extra['UnknownCustomField'] == 'some_value'
+
+
+def test_empty_subframe_path_is_none():
+    """Thermo Fisher Tomography writes 'SubFramePath = ' when no frames were saved."""
+    section = MdocSectionData.from_lines("""[ZValue = 0]
+TiltAngle = 0.00
+SubFramePath = 
+NumSubFrames = 0
+""".split('\n'))
+    assert section.SubFramePath is None
+    assert 'SubFramePath = .' not in section.to_string()

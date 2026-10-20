@@ -152,6 +152,15 @@ class MdocSectionData(BaseModel):
             value = tuple(value.split())
         return value
 
+    @field_validator('SubFramePath', mode="before")
+    @classmethod
+    def empty_path_to_none(cls, value):
+        """An empty 'SubFramePath =' (written by Thermo Fisher Tomography when no
+        frames were saved) means no path, not the current directory '.'"""
+        if isinstance(value, str) and value.strip() == '':
+            return None
+        return value
+
     @field_validator('FrameDosesAndNumbers', mode="before")
     @classmethod
     def parse_frame_doses_and_numbers(cls, value: str):
