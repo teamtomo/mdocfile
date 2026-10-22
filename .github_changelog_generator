@@ -1,6 +1,0 @@
-user=teamtomo
-project=mdocfile
-issues=false
-exclude-labels=duplicate,question,invalid,wontfix,hide
-add-sections={"tests":{"prefix":"**Tests & CI:**","labels":["tests"]}, "documentation":{"prefix":"**Documentation:**", "labels":["documentation"]}}
-exclude-tags-regex=.*rc
