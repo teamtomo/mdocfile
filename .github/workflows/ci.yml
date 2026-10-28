@@ -2,57 +2,55 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
-    tags:
-      - "v*"
+    branches: [main]
+    tags: [v*]
   pull_request:
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * 0" # every week (for --pre release tests)
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check-manifest:
+    # check-manifest is a tool that checks that all files in version control are
+    # included in the sdist (unless explicitly excluded)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - run: pipx run check-manifest
 
   test:
     name: ${{ matrix.platform }} (${{ matrix.python-version }})
     runs-on: ${{ matrix.platform }}
+    env:
+      UV_PRERELEASE: ${{ github.event_name == 'schedule' && 'allow' || 'if-necessary-or-explicit' }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.9', '3.10', '3.11']
+        python-version: ["3.12", "3.13", "3.14"]
+        # mdocfile is pure Python (py3-none-any wheel), so testing on Linux only.
         platform: [ubuntu-latest]
 
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
+      - uses: actions/checkout@v7
 
-      - uses: actions/checkout@v3
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: 🐍 Set up Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
-          cache-dependency-path: "pyproject.toml"
-          cache: "pip"
+          enable-cache: true
 
-      # if running a cron job, we add the --pre flag to test against pre-releases
-      - name: Install dependencies
-        run: |
-          python -m pip install -U pip
-          python -m pip install .[test] ${{ github.event_name == 'schedule' && '--pre' || ''  }}
+      - name: Install Dependencies
+        run: uv sync --no-dev --group test
 
-      - name: Test
-        run: pytest --color=yes --cov --cov-report=xml --cov-report=term-missing
+      - name: 🧪 Run Tests
+        run: uv run pytest --color=yes --cov --cov-report=xml --cov-report=term-missing
 
-      # If something goes wrong, we can open an issue in the repo
-      - name: Report --pre Failures
+      # If something goes wrong with --pre tests, we can open an issue in the repo
+      - name: 📝 Report --pre Failures
         if: failure() && github.event_name == 'schedule'
         uses: JasonEtco/create-an-issue@v2
         env:
@@ -60,42 +58,60 @@ jobs:
           PLATFORM: ${{ matrix.platform }}
           PYTHON: ${{ matrix.python-version }}
           RUN_ID: ${{ github.run_id }}
-          TITLE: '[test-bot] pip install --pre is failing'
+          TITLE: "[test-bot] pip install --pre is failing"
         with:
           filename: .github/TEST_FAIL_TEMPLATE.md
           update_existing: true
 
       - name: Coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v7
 
-  deploy:
-    name: Deploy
+  build-package:
+    name: Build & check package
     needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v7
+
+      - name: 👷 Build
+        run: uv build
+
+      - name: 🔍 Check package metadata
+        run: uvx twine check --strict dist/*
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Packages
+          path: dist
+
+  upload-to-pypi:
+    name: Upload package to PyPI
+    needs: build-package
     if: success() && startsWith(github.ref, 'refs/tags/') && github.event_name != 'schedule'
     runs-on: ubuntu-latest
 
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing on PyPi
+      # see https://docs.pypi.org/trusted-publishers/
+      id-token: write
+      # This permission allows writing releases
+      contents: write
+
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Download built artifact to dist/
+        uses: actions/download-artifact@v8
         with:
-          python-version: "3.x"
+          name: Packages
+          path: dist
 
-      - name: install
-        run: |
-          git tag
-          pip install -U pip build twine
-          python -m build
-          twine check dist/*
-          ls -lh dist
+      - name: 🚢 Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
 
-      - name: Build and publish
-        run: twine upload dist/*
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.TWINE_API_KEY }}
-
-      - uses: softprops/action-gh-release@v1
+      - uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
+          files: './dist/*'
