@@ -8,7 +8,7 @@ build-backend = "hatchling.build"
 name = "mdocfile"
 description = "SerialEM mdoc files as pandas dataframes."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 license = { text = "BSD 3-Clause License" }
 authors = [
     { email = "alisterburt@gmail.com", name = "Alister Burt" },
@@ -18,9 +18,10 @@ classifiers = [
     "License :: OSI Approved :: BSD License",
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Operating System :: OS Independent",
 ]
 dynamic = ["version"]
 dependencies = [
@@ -28,18 +29,17 @@ dependencies = [
     "pydantic>=2"
 ]
 
-# extras
-# https://peps.python.org/pep-0621/#dependencies-optional-dependencies
-[project.optional-dependencies]
+# dependency groups (e.g. for `uv sync --group test`)
+# https://peps.python.org/pep-0735/
+[dependency-groups]
 test = ["pytest>=6.0", "pytest-cov"]
 dev = [
+    { include-group = "test" },
     "black",
     "ipython",
     "mypy",
     "pdbpp",
     "pre-commit",
-    "pytest-cov",
-    "pytest",
     "rich",
     "ruff",
 ]
@@ -72,9 +72,11 @@ sources = ["src"]
 # https://github.com/charliermarsh/ruff
 [tool.ruff]
 line-length = 88
-target-version = "py38"
+target-version = "py312"
 src = ["src"]
-# https://beta.ruff.rs/docs/rules/
+
+[tool.ruff.lint]
+# https://docs.astral.sh/ruff/rules/
 select = [
     "E",    # style errors
     "W",    # style warnings
@@ -103,7 +105,7 @@ ignore = [
     "D416", # Section name should end with a colon
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/*.py" = ["D", "S"]
 
 # https://docs.pytest.org/en/6.2.x/customize.html
@@ -143,7 +145,6 @@ source = ["mdocfile"]
 # https://github.com/mgedmin/check-manifest#configuration
 [tool.check-manifest]
 ignore = [
-    ".github_changelog_generator",
     ".pre-commit-config.yaml",
     ".ruff_cache/**/*",
     "tests/**/*",
