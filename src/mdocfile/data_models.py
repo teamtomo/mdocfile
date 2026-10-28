@@ -1,4 +1,5 @@
 import logging
+import math
 import pandas as pd
 from pydantic import field_validator, BaseModel, ConfigDict, Field, PrivateAttr
 from pathlib import Path, PureWindowsPath
@@ -7,6 +8,23 @@ from typing import List, Optional, Set, Tuple, Union, Sequence
 from mdocfile.utils import find_section_entries, find_title_entries
 
 log = logging.getLogger('mdocfile')
+
+
+def _format_value(value) -> str:
+    """Consistent formatting of SerialEM mdoc values."""
+    # NOTE: booleans written as 0/1
+    if isinstance(value, bool):
+        return str(int(value))
+
+    # NOTE: NaN values written as 'NaN' (not 'nan' or 'None')
+    if isinstance(value, float) and math.isnan(value):
+        return 'NaN'
+
+    # NOTE: tuples/lists written as space-separated values
+    if isinstance(value, (tuple, list)):
+        return ' '.join(_format_value(el) for el in value)
+
+    return str(value)
 
 
 class MdocGlobalData(BaseModel):
@@ -61,11 +79,7 @@ class MdocGlobalData(BaseModel):
         for k, v in self.model_dump().items():
             if v is None:
                 continue
-            if isinstance(v, tuple):
-                v = ' '.join(str(el) for el in v)
-            if v == 'nan':
-                v = 'NaN'
-            lines.append(f'{k} = {v}')
+            lines.append(f'{k} = {_format_value(v)}')
         return '\n'.join(lines)
 
 
@@ -84,10 +98,10 @@ class MdocSectionData(BaseModel):
 
     # section data
     TiltAngle: Optional[float] = None
-    PieceCoordinates: Optional[Tuple[float, float, int]] = None
+    PieceCoordinates: Optional[Tuple[int, int, int]] = None
     StagePosition: Optional[Tuple[float, float]] = None
     StageZ: Optional[float] = None
-    Magnification: Optional[float] = None
+    Magnification: Optional[int] = None
     CameraLength: Optional[float] = None
     MagIndex: Optional[int] = None
     Intensity: Optional[float] = None
@@ -95,7 +109,7 @@ class MdocSectionData(BaseModel):
     PixelSpacing: Optional[float] = None
     ExposureDose: Optional[float] = None
     DoseRate: Optional[float] = None
-    SpotSize: Optional[float] = None
+    SpotSize: Optional[int] = None
     Defocus: Optional[float] = None
     TargetDefocus: Optional[float] = None
     ImageShift: Optional[Tuple[float, float]] = None
@@ -217,12 +231,8 @@ class MdocSectionData(BaseModel):
             output_key = self._used_aliases.get(k, k)
 
             if k == 'FrameDosesAndNumbers' and isinstance(v, list):
-                v = ' '.join(f'{d} {n}' for d, n in v)
-            elif isinstance(v, tuple):
-                v = ' '.join(str(el) for el in v)
-            elif v == 'nan':
-                v = 'NaN'
-            lines.append(f'{output_key} = {v}')
+                v = ' '.join(f'{_format_value(d)} {n}' for d, n in v)
+            lines.append(f'{output_key} = {_format_value(v)}')
         return '\n'.join(lines)
 
 

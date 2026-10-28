@@ -222,6 +222,29 @@ UnknownCustomField = some_value
     assert mdoc2.section_data[0].model_extra['UnknownCustomField'] == 'some_value'
 
 
+def test_to_string_writes_integers_booleans_and_nan_like_serialem(montage_section_mdoc_file):
+    """Values are written in a form IMOD can parse: integer keys without a
+    decimal point, booleans as 0/1 and NaN as NaN."""
+    mdoc = Mdoc.from_file(montage_section_mdoc_file)
+    lines = mdoc.to_string().split('\n')
+    assert 'Montage = 1' in lines
+    assert 'PieceCoordinates = 0 3400 0' in lines
+    assert 'Magnification = 135' in lines
+    assert 'SpotSize = 7' in lines
+    assert 'DividedBy2 = 1' in lines
+    assert not any(line.endswith(('True', 'False')) for line in lines)
+
+    section = MdocSectionData.from_lines("""[ZValue = 0]
+CameraLength = NaN
+FilterSlitAndLoss = NaN NaN
+FrameDosesAndNumber = NaN -1
+""".split('\n'))
+    lines = section.to_string().split('\n')
+    assert 'CameraLength = NaN' in lines
+    assert 'FilterSlitAndLoss = NaN NaN' in lines
+    assert 'FrameDosesAndNumber = NaN -1' in lines
+
+    
 def test_empty_subframe_path_is_none():
     """Thermo Fisher Tomography writes 'SubFramePath = ' when no frames were saved."""
     section = MdocSectionData.from_lines("""[ZValue = 0]
