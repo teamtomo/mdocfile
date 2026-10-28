@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -497,8 +497,8 @@ The expected types can be seen by inspecting the model definitions in
     <span class="n">StagePosition</span><span class="o">=</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">),</span>
     <span class="n">PriorRecordDose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
     <span class="n">ExposureDose</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
-    <span class="n">SubFramePath</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/images/first_image.tif&#39;</span><span class="p">),</span>
-    <span class="n">DateTime</span><span class="o">=</span><span class="s1">&#39;05-Nov-15  15:21:38&#39;</span><span class="p">,</span>
+    <span class="n">SubFramePath</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s1">'/images/first_image.tif'</span><span class="p">),</span>
+    <span class="n">DateTime</span><span class="o">=</span><span class="s1">'05-Nov-15  15:21:38'</span><span class="p">,</span>
     <span class="n">NumSubFrames</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -508,23 +508,23 @@ The expected types can be seen by inspecting the model definitions in
     <span class="n">StagePosition</span><span class="o">=</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">),</span>
     <span class="n">PriorRecordDose</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
     <span class="n">ExposureDose</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
-    <span class="n">SubFramePath</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/images/second_image.tif&#39;</span><span class="p">),</span>
-    <span class="n">DateTime</span><span class="o">=</span><span class="s1">&#39;05-Nov-15  15:22:38&#39;</span><span class="p">,</span>
+    <span class="n">SubFramePath</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s1">'/images/second_image.tif'</span><span class="p">),</span>
+    <span class="n">DateTime</span><span class="o">=</span><span class="s1">'05-Nov-15  15:22:38'</span><span class="p">,</span>
     <span class="n">NumSubFrames</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># construct mdoc model</span>
 <span class="n">mdoc</span> <span class="o">=</span> <span class="n">Mdoc</span><span class="p">(</span>
     <span class="n">titles</span><span class="o">=</span><span class="p">[</span>
-        <span class="s1">&#39;[T = SerialEM: Digitized on EMBL Krios                       30-Nov-15  15:14:20    ]&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;[T =     Tilt axis angle = 85.3, binning = 4  spot = 8  camera = 2]&#39;</span>
+        <span class="s1">'[T = SerialEM: Digitized on EMBL Krios                       30-Nov-15  15:14:20    ]'</span><span class="p">,</span>
+        <span class="s1">'[T =     Tilt axis angle = 85.3, binning = 4  spot = 8  camera = 2]'</span>
     <span class="p">],</span>
     <span class="n">global_data</span><span class="o">=</span><span class="n">global_data</span><span class="p">,</span>
     <span class="n">section_data</span><span class="o">=</span><span class="p">[</span><span class="n">first_section</span><span class="p">,</span> <span class="n">second_section</span><span class="p">]</span>
 <span class="p">)</span>
 
 <span class="c1"># write out the file</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;my_new_mdoc.mdoc&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'my_new_mdoc.mdoc'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'w+'</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
     <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">mdoc</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
 </code></pre></div>
 <p>The code above produces the following file:</p>
@@ -610,10 +610,10 @@ DateTime = 05-Nov-15  15:22:38
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.expand", "search.highlight", "search.suggest", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.expand", "search.highlight", "search.suggest", "content.tabs.link"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>
