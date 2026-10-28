@@ -11,17 +11,19 @@ log = logging.getLogger('mdocfile')
 
 
 def _format_value(value) -> str:
-    """Format a value for an mdoc file the way SerialEM writes it.
-
-    Booleans are written as 0/1 and NaN as 'NaN'. IMOD parses keys such as
-    Montage and DividedBy2 as integers and rejects 'True'/'False'.
-    """
+    """Consistent formatting of SerialEM mdoc values."""
+    # NOTE: booleans written as 0/1
     if isinstance(value, bool):
         return str(int(value))
+
+    # NOTE: NaN values written as 'NaN' (not 'nan' or 'None')
     if isinstance(value, float) and math.isnan(value):
         return 'NaN'
+
+    # NOTE: tuples/lists written as space-separated values
     if isinstance(value, (tuple, list)):
         return ' '.join(_format_value(el) for el in value)
+
     return str(value)
 
 
