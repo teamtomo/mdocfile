@@ -1,6 +1,8 @@
 from pathlib import Path, PureWindowsPath
 from tempfile import NamedTemporaryFile
 
+import pytest
+
 from mdocfile.data_models import MdocGlobalData, MdocSectionData, Mdoc
 
 GLOBAL_DATA_EXAMPLE = r"""PixelSpacing = 5.4
@@ -90,6 +92,35 @@ def test_to_string_is_valid_mdoc(tilt_series_mdoc_file):
     for (k1, v1), (k2, v2) in zip(mdoc_dict.items(), mdoc2_dict.items()):
         assert v1 == v2
         assert k1 == k2
+
+@pytest.mark.parametrize(
+    'mdoc_file_fixture',
+    [
+        'frame_set_single_mdoc_file',
+        'frame_set_multiple_mdoc_file',
+        'montage_section_mdoc_file',
+        'montage_section_multiple_mdoc_file',
+    ]
+)
+def test_to_string_keeps_section_headers(mdoc_file_fixture, request):
+    """FrameSet and MontSection sections are written with their own header."""
+    mdoc_file = request.getfixturevalue(mdoc_file_fixture)
+    mdoc = Mdoc.from_file(mdoc_file)
+    mdoc_string = mdoc.to_string()
+    assert '[ZValue = None]' not in mdoc_string
+
+    with open(mdoc_file) as f:
+        headers = [line.strip() for line in f if line.startswith(('[ZValue', '[MontSection', '[FrameSet'))]
+    written_headers = [line for line in mdoc_string.split('\n') if line.startswith(('[ZValue', '[MontSection', '[FrameSet'))]
+    assert written_headers == headers
+
+    mdoc2 = Mdoc.from_string(mdoc_string)
+    assert len(mdoc2.section_data) == len(mdoc.section_data)
+    for section, section2 in zip(mdoc.section_data, mdoc2.section_data):
+        assert section2.ZValue == section.ZValue
+        assert section2.MontSection == section.MontSection
+        assert section2.FrameSet == section.FrameSet
+
 
 def test_section_data_from_path():
     some_path = Path('bla.tif')
