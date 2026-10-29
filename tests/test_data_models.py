@@ -3,7 +3,7 @@ from tempfile import NamedTemporaryFile
 
 import pytest
 
-from mdocfile.data_models import MdocGlobalData, MdocSectionData, Mdoc
+from mdocfile.data_models import Mdoc, MdocGlobalData, MdocSectionData
 
 GLOBAL_DATA_EXAMPLE = r"""PixelSpacing = 5.4
 ImageFile = TS_01.mrc
@@ -13,11 +13,11 @@ DataMode = 1
 
 
 def test_global_data_from_lines():
-    lines = GLOBAL_DATA_EXAMPLE.split('\n')
+    lines = GLOBAL_DATA_EXAMPLE.split("\n")
     data = MdocGlobalData.from_lines(lines)
     assert isinstance(data, MdocGlobalData)
     assert data.PixelSpacing == 5.4
-    assert data.ImageFile == Path('TS_01.mrc')
+    assert data.ImageFile == Path("TS_01.mrc")
     assert data.DataMode == 1
 
 
@@ -47,7 +47,7 @@ DateTime = 30-Nov-15  15:21:38
 
 
 def test_section_data_from_lines():
-    lines = SECTION_DATA_EXAMPLE.split('\n')
+    lines = SECTION_DATA_EXAMPLE.split("\n")
     data = MdocSectionData.from_lines(lines)
     assert isinstance(data, MdocSectionData)
     assert data.TiltAngle == 0.000999877
@@ -68,9 +68,11 @@ def test_section_data_from_lines():
     assert data.MagIndex == 31
     assert data.MinMaxMean == (5, 1403, 623.699)
     assert data.TargetDefocus == -4
-    assert data.SubFramePath == PureWindowsPath(r'D:\DATA\Flo\HGK149_20151130\frames\TS_01_000_0.0.mrc')
+    assert data.SubFramePath == PureWindowsPath(
+        r"D:\DATA\Flo\HGK149_20151130\frames\TS_01_000_0.0.mrc"
+    )
     assert data.NumSubFrames == 8
-    assert data.DateTime == '30-Nov-15  15:21:38'
+    assert data.DateTime == "30-Nov-15  15:21:38"
 
 
 def test_mdoc_from_tilt_series_mdoc_file(tilt_series_mdoc_file):
@@ -89,51 +91,61 @@ def test_to_string_is_valid_mdoc(tilt_series_mdoc_file):
         mdoc2 = Mdoc.from_file(tmp.name)
     mdoc_dict = mdoc.section_data[0].model_dump()
     mdoc2_dict = mdoc2.section_data[0].model_dump()
-    for (k1, v1), (k2, v2) in zip(mdoc_dict.items(), mdoc2_dict.items()):
+    for (k1, v1), (k2, v2) in zip(mdoc_dict.items(), mdoc2_dict.items(), strict=False):
         assert v1 == v2
         assert k1 == k2
 
+
 @pytest.mark.parametrize(
-    'mdoc_file_fixture',
+    "mdoc_file_fixture",
     [
-        'frame_set_single_mdoc_file',
-        'frame_set_multiple_mdoc_file',
-        'montage_section_mdoc_file',
-        'montage_section_multiple_mdoc_file',
-    ]
+        "frame_set_single_mdoc_file",
+        "frame_set_multiple_mdoc_file",
+        "montage_section_mdoc_file",
+        "montage_section_multiple_mdoc_file",
+    ],
 )
 def test_to_string_keeps_section_headers(mdoc_file_fixture, request):
     """FrameSet and MontSection sections are written with their own header."""
     mdoc_file = request.getfixturevalue(mdoc_file_fixture)
     mdoc = Mdoc.from_file(mdoc_file)
     mdoc_string = mdoc.to_string()
-    assert '[ZValue = None]' not in mdoc_string
+    assert "[ZValue = None]" not in mdoc_string
 
     with open(mdoc_file) as f:
-        headers = [line.strip() for line in f if line.startswith(('[ZValue', '[MontSection', '[FrameSet'))]
-    written_headers = [line for line in mdoc_string.split('\n') if line.startswith(('[ZValue', '[MontSection', '[FrameSet'))]
+        headers = [
+            line.strip()
+            for line in f
+            if line.startswith(("[ZValue", "[MontSection", "[FrameSet"))
+        ]
+    written_headers = [
+        line
+        for line in mdoc_string.split("\n")
+        if line.startswith(("[ZValue", "[MontSection", "[FrameSet"))
+    ]
     assert written_headers == headers
 
     mdoc2 = Mdoc.from_string(mdoc_string)
     assert len(mdoc2.section_data) == len(mdoc.section_data)
-    for section, section2 in zip(mdoc.section_data, mdoc2.section_data):
+    for section, section2 in zip(mdoc.section_data, mdoc2.section_data, strict=False):
         assert section2.ZValue == section.ZValue
         assert section2.MontSection == section.MontSection
         assert section2.FrameSet == section.FrameSet
 
 
 def test_section_data_from_path():
-    some_path = Path('bla.tif')
+    some_path = Path("bla.tif")
     section = MdocSectionData(SubFramePath=some_path)
     assert section.SubFramePath == some_path
-    assert f'SubFramePath = {some_path}' in section.to_string()
+    assert f"SubFramePath = {some_path}" in section.to_string()
+
 
 def test_fieldname_alias_mapping():
     """Test that aliased field names are mapped to canonical names."""
     lines = """[ZValue = 0]
 TiltAngle = 5.0
 FrameDosesAndNumber = 2.5 10 3.0 20
-""".split('\n')
+""".split("\n")
 
     section = MdocSectionData.from_lines(lines)
 
@@ -142,15 +154,15 @@ FrameDosesAndNumber = 2.5 10 3.0 20
     assert section.FrameDosesAndNumbers == [(2.5, 10), (3.0, 20)]
 
     # to_string should output the alias FrameDosesAndNumber due to serialize_by_alias
-    assert 'FrameDosesAndNumber = 2.5 10 3.0 20' in section.to_string()
+    assert "FrameDosesAndNumber = 2.5 10 3.0 20" in section.to_string()
 
     # Keeps orig
     section = MdocSectionData.from_lines("""[ZValue = 0]
 TiltAngle = 5.0
 FrameDosesAndNumbers = 2.5 10 3.0 20
-""".split('\n'))
+""".split("\n"))
     # to_string should output the alias FrameDosesAndNumber due to serialize_by_alias
-    assert 'FrameDosesAndNumbers = 2.5 10 3.0 20' in section.to_string()
+    assert "FrameDosesAndNumbers = 2.5 10 3.0 20" in section.to_string()
 
 
 def test_extra_fields_round_trip():
@@ -167,13 +179,13 @@ UnknownCustomField = some_value
     mdoc = Mdoc.from_string(mdoc_str)
 
     # Extra fields stored in model_extra
-    assert mdoc.section_data[0].model_extra['CountsPerElectron'] == '42.0'
-    assert mdoc.section_data[0].model_extra['UnknownCustomField'] == 'some_value'
+    assert mdoc.section_data[0].model_extra["CountsPerElectron"] == "42.0"
+    assert mdoc.section_data[0].model_extra["UnknownCustomField"] == "some_value"
 
     # Round-trip preserves extra fields
     mdoc2 = Mdoc.from_string(mdoc.to_string())
-    assert mdoc2.section_data[0].model_extra['CountsPerElectron'] == '42.0'
-    assert mdoc2.section_data[0].model_extra['UnknownCustomField'] == 'some_value'
+    assert mdoc2.section_data[0].model_extra["CountsPerElectron"] == "42.0"
+    assert mdoc2.section_data[0].model_extra["UnknownCustomField"] == "some_value"
 
 
 def test_dataframe_alias_mapping():
@@ -190,10 +202,13 @@ FrameDosesAndNumber = 2.5 10 3.0 20
     df = mdoc.to_dataframe()
 
     # Dataframe should have the alias it came as
-    assert 'FrameDosesAndNumber' in df.columns
+    assert "FrameDosesAndNumber" in df.columns
 
     # Round-trip through dataframe
-    assert Mdoc.from_dataframe(df).section_data[0].FrameDosesAndNumbers == [(2.5, 10), (3.0, 20)]
+    assert Mdoc.from_dataframe(df).section_data[0].FrameDosesAndNumbers == [
+        (2.5, 10),
+        (3.0, 20),
+    ]
 
 
 def test_dataframe_extra_fields_round_trip():
@@ -211,46 +226,48 @@ UnknownCustomField = some_value
     df = mdoc.to_dataframe()
 
     # Extra fields should be columns in dataframe
-    assert 'CountsPerElectron' in df.columns
-    assert 'UnknownCustomField' in df.columns
-    assert df['CountsPerElectron'].iloc[0] == '42.0'
-    assert df['UnknownCustomField'].iloc[0] == 'some_value'
+    assert "CountsPerElectron" in df.columns
+    assert "UnknownCustomField" in df.columns
+    assert df["CountsPerElectron"].iloc[0] == "42.0"
+    assert df["UnknownCustomField"].iloc[0] == "some_value"
 
     # Round-trip through dataframe preserves extra fields
     mdoc2 = Mdoc.from_dataframe(df)
-    assert mdoc2.section_data[0].model_extra['CountsPerElectron'] == '42.0'
-    assert mdoc2.section_data[0].model_extra['UnknownCustomField'] == 'some_value'
+    assert mdoc2.section_data[0].model_extra["CountsPerElectron"] == "42.0"
+    assert mdoc2.section_data[0].model_extra["UnknownCustomField"] == "some_value"
 
 
-def test_to_string_writes_integers_booleans_and_nan_like_serialem(montage_section_mdoc_file):
+def test_to_string_writes_integers_booleans_and_nan_like_serialem(
+    montage_section_mdoc_file,
+):
     """Values are written in a form IMOD can parse: integer keys without a
     decimal point, booleans as 0/1 and NaN as NaN."""
     mdoc = Mdoc.from_file(montage_section_mdoc_file)
-    lines = mdoc.to_string().split('\n')
-    assert 'Montage = 1' in lines
-    assert 'PieceCoordinates = 0 3400 0' in lines
-    assert 'Magnification = 135' in lines
-    assert 'SpotSize = 7' in lines
-    assert 'DividedBy2 = 1' in lines
-    assert not any(line.endswith(('True', 'False')) for line in lines)
+    lines = mdoc.to_string().split("\n")
+    assert "Montage = 1" in lines
+    assert "PieceCoordinates = 0 3400 0" in lines
+    assert "Magnification = 135" in lines
+    assert "SpotSize = 7" in lines
+    assert "DividedBy2 = 1" in lines
+    assert not any(line.endswith(("True", "False")) for line in lines)
 
     section = MdocSectionData.from_lines("""[ZValue = 0]
 CameraLength = NaN
 FilterSlitAndLoss = NaN NaN
 FrameDosesAndNumber = NaN -1
-""".split('\n'))
-    lines = section.to_string().split('\n')
-    assert 'CameraLength = NaN' in lines
-    assert 'FilterSlitAndLoss = NaN NaN' in lines
-    assert 'FrameDosesAndNumber = NaN -1' in lines
+""".split("\n"))
+    lines = section.to_string().split("\n")
+    assert "CameraLength = NaN" in lines
+    assert "FilterSlitAndLoss = NaN NaN" in lines
+    assert "FrameDosesAndNumber = NaN -1" in lines
 
-    
+
 def test_empty_subframe_path_is_none():
     """Thermo Fisher Tomography writes 'SubFramePath = ' when no frames were saved."""
     section = MdocSectionData.from_lines("""[ZValue = 0]
 TiltAngle = 0.00
-SubFramePath = 
+SubFramePath =
 NumSubFrames = 0
-""".split('\n'))
+""".split("\n"))
     assert section.SubFramePath is None
-    assert 'SubFramePath = .' not in section.to_string()
+    assert "SubFramePath = ." not in section.to_string()
